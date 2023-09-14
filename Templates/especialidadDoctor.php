@@ -21,7 +21,9 @@ require_once('../Models/conexion.php');
                 <div class="card">
                     <div class="card-body">
 
-                        <h4>Especialidades<a href="../View/agregarEspecialidad.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> Registrar</a> </h4>
+                        <h4>Especialidad Doctores
+                        <a href="../View/asignarEspecialidad.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> Asignar</a>   
+                    </h4>
 
                         <div class="table-responsive pt-3">
                             <table class="table table-bordered text-center" id="tabla">
@@ -33,7 +35,11 @@ require_once('../Models/conexion.php');
 
                                         <th>
 
-                                            Descripción
+                                            Medico
+                                        </th>
+                                        <th>
+
+                                            Especialidad
                                         </th>
                                         <?php if ($_SESSION['rol'] == 1) { ?>
                                             <th>
@@ -46,7 +52,10 @@ require_once('../Models/conexion.php');
                                 <tbody>
                                     <?php
 
-                                    $sql = mysqli_query($conection, "SELECT e.id,e.descripcion FROM especialidades e  WHERE e.estatus = 1");
+                                    $sql = mysqli_query($conection, "SELECT ed.id, m.nombre, e.descripcion FROM especialidad_doctores ed 
+                                    INNER JOIN especialidades e ON e.id = ed.especialidad_id
+                                    INNER JOIN medicos m ON m.id = ed.doctor_id 
+                                    where ed.estatus = 1");
 
                                     $resultado = mysqli_num_rows($sql);
 
@@ -55,10 +64,11 @@ require_once('../Models/conexion.php');
                                     ?>
                                             <tr>
                                                 <td><?php echo $data['id']; ?></td>
+                                                <td><?php echo $data['nombre']; ?></td>
                                                 <td><?php echo $data['descripcion']; ?></td>
                                                 <?php if ($_SESSION['rol'] == 1 ) { ?>
                                                     <td>
-                                                        <a href="../View/modificarEspecialidad.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-edit"></i></a>
+                                                        <a href="../View/modificarEspecialidadMedico.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-edit"></i></a>
                                                     </td>
                                                 <?php } ?>                                             
                                             </tr>

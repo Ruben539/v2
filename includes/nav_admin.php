@@ -154,7 +154,8 @@
             <div class="collapse" id="especialidad">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="../Templates/especialidades.php">Especialidades</a></li>
-                <li class="nav-item"> <a class="nav-link" href="../Templates/asignarEspecialidad.php">Asignar Especialidad</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../View/asignarEspecialidad.php">Asignar Especialidad</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/especialidadDoctor.php">Esp. Doctores</a></li>
               </ul>
             </div>
           </li>
