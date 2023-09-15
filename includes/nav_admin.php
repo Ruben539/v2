@@ -189,6 +189,18 @@
             </div>
           </li>
           <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#seguros" aria-expanded="false" aria-controls="seguros">
+              <i class="typcn typcn-contacts menu-icon"></i>
+              <span class="menu-title">Seguros </span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="seguros">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../Templates/seguros.php"> Lista de Seguros </a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
               <i class="typcn typcn-clipboard menu-icon"></i>
               <span class="menu-title">Gasto Diax</span>
