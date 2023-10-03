@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -21,7 +21,7 @@ require_once('../Models/conexion.php');
                 <div class="card">
                     <div class="card-body">
                         <div class=" shadow-primary border-radius-lg pt-1 pb-1">
-                            <h4 class="text-black text-capitalize ps-4 text-center">Registro de Comprobantes</h4>
+                            <h4 class="text-black text-capitalize ps-4 text-center">Registro de Paciente</h4>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,8 @@ require_once('../Models/conexion.php');
             
             if (empty($_REQUEST['id'])) {
 
-                $sql = mysqli_query($conection, "SELECT c.id,c.cedula,c.nombre,c.apellido,c.celular,c.nacimiento FROM clientes c  order by id desc limit 1");
+                $sql = mysqli_query($conection, 
+                "SELECT u.id,u.cedula,u.nombre,u.correo,u.telefono,u.sexo,u.fecha_nac FROM usuarios u order by id desc limit 1");
 
                 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -46,14 +47,14 @@ require_once('../Models/conexion.php');
                         $iduser     = $data['id'];
                         $cedula     = $data['cedula'];
                         $nombre     = $data['nombre'];
-                        $apellido   = $data['apellido'];
-                        $telefono   = $data['celular'];
-                        $fecha_nac  = $data['nacimiento'];
+                        $telefono   = $data['telefono'];
+                        $sexo       = $data['sexo'];
+                        $fecha_nac  = $data['fecha_nac'];
                     }
                 }
             } else {
 
-                $sql = mysqli_query($conection, "SELECT c.id,c.cedula,c.nombre,c.apellido,c.celular,c.nacimiento FROM clientes c WHERE id = '" . $_REQUEST['id'] . "'  ");
+                $sql = mysqli_query($conection, "SELECT u.id,u.cedula,u.nombre,u.correo,u.telefono,u.sexo,u.fecha_nac FROM usuarios u WHERE id = '" . $_REQUEST['id'] . "'  ");
 
                 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -69,9 +70,9 @@ require_once('../Models/conexion.php');
                         $id         = $data['id'];
                         $cedula     = $data['cedula'];
                         $nombre     = $data['nombre'];
-                        $apellido   = $data['apellido'];
-                        $telefono   = $data['celular'];
-                        $fecha_nac  = $data['nacimiento'];
+                        $telefono   = $data['telefono'];
+                        $sexo       = $data['sexo'];
+                        $fecha_nac  = $data['fecha_nac'];
                     }
                 }
             }
@@ -86,7 +87,7 @@ require_once('../Models/conexion.php');
                             <b>N° de Cedula :</b> <?= $cedula; ?>
                         </p>
                         <p class="card-description">
-                            <b>Nombre y Apellido :</b> <?= $nombre.' '.$apellido; ?>
+                            <b>Nombre y Apellido :</b> <?= $nombre; ?>
                         </p>
                         <p class="card-description">
                             <b>Nro de Telefono :</b> <?= $telefono; ?>
@@ -98,18 +99,18 @@ require_once('../Models/conexion.php');
                         <form class="forms-sample" action="comprobante.php" method="POST">
                             <input type="hidden" name="id"         id="id" value="<?php echo $id; ?>">
                             <input type="hidden" name="cedula"     id="cedula" value="<?php echo $cedula; ?>">
-                            <input type="hidden" name="nombre"     id="nombre" value="<?php echo $nombre .' '.$apellido; ?>">
-                            <input type="hidden" name="nacimiento" id="nacimiento" value="<?php echo $fecha_nac; ?>">
+                            <input type="hidden" name="nombre"     id="nombre" value="<?php echo $nombre; ?>">
+                            <input type="hidden" name="fecha"  id="fecha" value="<?php echo $fecha_nac; ?>">
                             <div class="form-group">
                                 <label for="exampleInputName1">Estudio a Realizar</label>
-                                <select name="ecografias[]" class="chosen form-control" data-placeholder="Elige uno o varios estudios" multiple>
+                                <select name="estudios[]" class="chosen form-control" data-placeholder="Elige uno o varios estudios" multiple>
                                         <option value=""></option>
                                         <?php
-                                        $raw_results3 = mysqli_query($conection, "select * from tarifas where Estudio not like '%TAC%' and estatus = 1;") or die(mysqli_error($conection));
+                                        $raw_results3 = mysqli_query($conection, "select * from estudios where nombre not like '%TAC%' and estatus = 1;") or die(mysqli_error($conection));
                                         while ($results = mysqli_fetch_array($raw_results3)) {
                                         ?>
-                                            <option value=" <?php echo $results['Estudio'] ?> ">
-                                                <?php echo $results['Estudio']; ?>
+                                            <option value=" <?php echo $results['id'] ?> ">
+                                                <?php echo $results['nombre']; ?>
                                             </option>
 
                                         <?php
@@ -119,20 +120,20 @@ require_once('../Models/conexion.php');
                             </div>
 
                             <div class="form-group">
-                                <label for="rayosx">Posición de Rayos</label>
-                                <input type="number" class="form-control" name = "rayosx" id="rayosx">
+                                <label for="nro_rayos">Posición de Rayos</label>
+                                <input type="number" class="form-control" name = "nro_rayos" id="nro_rayos">
                             </div>
                             <div class="form-group">
-                                <label for="medico">Medico Tratante</label>
-                                <select class="chosen form-control" name="medico" id="medico" required data-placeholder="Seleccione un Medico">
+                                <label for="doctor_id">Medico Tratante</label>
+                                <select class="chosen form-control" name="doctor_id" id="doctor_id" required data-placeholder="Seleccione un Medico">
                                             <option value=""></option>
                                             <?php
                                             $raw_results4 = mysqli_query($conection, "select * from medicos;") or die(mysqli_error($conection));
                                             while ($results = mysqli_fetch_array($raw_results4)) {
                                             ?>
 
-                                                <option value=" <?php echo $results['Nombre'] ?> ">
-                                                    <?php echo $results['Nombre']; ?>
+                                                <option value=" <?php echo $results['id'] ?> ">
+                                                    <?php echo $results['nombre']; ?>
                                                 </option>
 
                                             <?php
@@ -142,11 +143,42 @@ require_once('../Models/conexion.php');
                             </div>
                             <div class="form-group">
                                 <label for="seguro">Tipo de Seguro</label>
-                                <select class="form-control" name="seguro" id="seguro" required data-placeholder="Seleccione un Seguro" id="test" onchange="document.getElementById('text_content').value=this.options[this.selectedIndex].text">
-                                            <option value="SinSeguro">Sin Seguro</option>
-                                            <option value="Hospitalar">Hospitalario</option>
+                                <select class="chosen form-control" name="seguro_id" id="seguro_id" required data-placeholder="Seleccione un Seguro">
+                                            <option value=""></option>
+                                            <?php
+                                            $raw_results4 = mysqli_query($conection, "select * from seguros;") or die(mysqli_error($conection));
+                                            while ($results = mysqli_fetch_array($raw_results4)) {
+                                            ?>
+
+                                                <option value=" <?php echo $results['id'] ?> ">
+                                                    <?php echo $results['descripcion']; ?>
+                                                </option>
+
+                                            <?php
+                                            }
+                                            ?>
                                         </select>
                             </div>
+
+                            <div class="form-group">
+                                <label for="forma_pago_id">Forma de Pago</label>
+                                <select class="chosen form-control" name="forma_pago_id" id="forma_pago_id" required data-placeholder="Seleccione la forma de Pago">
+                                            <option value=""></option>
+                                            <?php
+                                            $raw_results4 = mysqli_query($conection, "select * from forma_pagos;") or die(mysqli_error($conection));
+                                            while ($results = mysqli_fetch_array($raw_results4)) {
+                                            ?>
+
+                                                <option value=" <?php echo $results['id'] ?> ">
+                                                    <?php echo $results['descripcion']; ?>
+                                                </option>
+
+                                            <?php
+                                            }
+                                            ?>
+                                        </select>
+                            </div>
+
                             <input type="hidden" name="texto" id="text_content" value=" " />
                             <div class="form-group">
                                 <label>Descuento a Aplicar</label>
@@ -154,7 +186,7 @@ require_once('../Models/conexion.php');
                             </div>
                             <div class="form-group">
                                 <label for="comentario">Observacion sobre la Orden</label>
-                                <textarea class="form-control" name="comentario" style='width:100%;padding: 16px'></textarea>
+                                <textarea class="form-control" name="comentario" id="comentario" style='width:100%;padding: 16px'></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary mr-2">Registrar</button>
                             <button class="btn btn-light">Cancelar</button>

@@ -1,8 +1,10 @@
 <?php
 
+// print_r($_POST);
+// exit();
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -22,24 +24,29 @@ require_once('../Models/conexion.php');
                 <div class="card">
                     <div class="card-body">
                         <div class=" shadow-primary border-radius-lg pt-1 pb-1">
-                            <h4 class="text-black text-capitalize ps-4 text-center">Registro de Comprobantes</h4>
+                            <h4 class="text-black text-capitalize ps-4 text-center">Registro de la Orden</h4>
                         </div>
                     </div>
                 </div>
             </div>
             <?php
+//Datos para el detalle del paciente
+            $fecha_nac   = $_POST['fecha']; 
 
+//Item o valores para la tabla de comprobantes
             $id          = $_POST['id'];
             $ci          = $_POST['cedula'];
-            $nombre      = $_POST['nombre'];
-            $nacimiento  = $_POST['nacimiento'];
-            $seguro      = $_POST['seguro'];
-            $segurot     = $_POST['texto'];
-            $medico      = $_POST['medico'];
-            $descuento   = $_POST['descuento'];
+            $nombre      = $_POST['nombre'];    
+            $doctor_id   = $_POST['doctor_id'];
             $comentario  = $_POST['comentario'];
-            $ecografias  = $_POST['ecografias'];
-            $rayosx      = $_POST['rayosx'];
+           
+
+//Item o valores para la tabla del detalle de comprobantes
+            $descuento        = $_POST['descuento'];
+            $seguro_id        = $_POST['seguro_id'];
+            $forma_pago_id    = $_POST['forma_pago_id'];
+            $estudios         = $_POST['estudios'];
+            $nro_rayos        = $_POST['nro_rayos'];
 
 
 
@@ -56,56 +63,57 @@ require_once('../Models/conexion.php');
                             Nombre : <code><?= $nombre ?></code>
                         </p>
                         <p class="card-description">
-                            Fecha Nac. : <code><?= $nacimiento ?></code>
+                            Fecha Nac. : <code><?= $fecha_nac ?></code>
                         </p>
-                        <p class="card-description">
-                            Medico Atendedor : <code><?= $medico ?></code>
-                        </p>
+                        
 
                         <div class="table-responsive pt-3">
 
 
                             <?php
                             echo "<form action='facturacion.php' method='post'>";
-                            echo "<input type='hidden' name='seguro' value=" . $seguro . ">";
-                            echo "<input type='hidden' name='ci' value=" . $ci . ">";
-                            echo "<input type='hidden' name='nombre' value='" . $id . "'>";
-                            echo "<input type='hidden' name='medico' value='" . $medico . "'>";
-                            echo "<input type='hidden' name='descuento' value='" . $descuento . "'>";
+                            echo "<input type='hidden' name='ruc' value=" . $ci . ">";
+                            echo "<input type='hidden' name='razon_social' value=" . $nombre . ">";
+                            echo "<input type='hidden' name='paciente_id' value='" . $id . "'>";
+                            echo "<input type='hidden' name='doctor_id' value='" . $doctor_id . "'>";
                             echo "<input type='hidden' name='comentario' value='" . $comentario . "'>";
+                          
+                           // echo "<input type='hidden' name='estudios[]' value='" . $estudios . "'>";
                             $total = 0;
                             $estudio = '';
-                            $results[$seguro] = 0;
-                            for ($i = 0; $i < count($ecografias); $i++) {
-                                $estudio = trim($estudio . $ecografias[$i]) . ".";
-                                $e2 = trim($ecografias[$i]);
+                            for ($i = 0; $i < count($estudios); $i++) {
+                                $estudio =  $estudios[$i];
+                        
                                 echo "<table class='table table-bordered'>";
                                 echo "<tbody>";
-                                echo "<tr><td>Estudios a Realizar:" . $ecografias[$i] . "</td><td align='right'>";
-                                $raw_results2 = mysqli_query($conection, "select " . $seguro . " from tarifas where Estudio='" . trim($ecografias[$i]) . "';") or die(mysqli_error($conection));
+                                echo "<tr><td>Montos a Cobrar: </td><td align='right'>";
+                                $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
                                 while ($results = mysqli_fetch_array($raw_results2)) {
-                                    echo $results[$seguro] . "</td></tr>";
-                                    if ($e2 == 'Radiografias') {
-                                        $results[$seguro] = $results[$seguro] * $rayosx;
+                                    echo "<input type='hidden' name='estudio_id[]' value='" .$results['id']. "'>";
+                                    echo "<input type='hidden' name='descripcion[]' value='" .$results['nombre']. "'>";
+                                    echo "<input type='hidden' name='monto[]' value='" .$results['seguro']. "'>";
+                                    echo  number_format($results['seguro'], 0, '.', '.'). "</td></tr>";
+                                    if ($results['nombre'] == 'Radiografias') {
+                                        $results = $results['seguro'] * $nro_rayos;
                                     }
-                                    $total = ((int)$total + (int)$results[$seguro]);
+                                    $total =  (int)$results;
                                 }
                             }
 
                             $total = $total - $descuento;
-                            $total = number_format($total, 3, '.', '.');
-                            if ($rayosx > 0) {
+                            $total = number_format($total, 0, '.', '.');
+                            if ($nro_rayos > 0) {
 
-                                echo "<tr><td>Rayos X Numero de Posiciones:</td><td align='right'>" . $rayosx . "</td></tr>";
+                                echo "<tr><td>Rayos X Numero de Posiciones:</td><td align='right'>" . $nro_rayos . "</td></tr>";
                                 #$estudio=$estudio." Numero de Posiciones Rayos X: ". $rayosx. ".";
                             }
-                            echo "<tr><td><b><i>Descuento:</td><td align='right'><b><i>" . $descuento . "</td></tr>";
+                            echo "<tr><td><b><i>Descuento:</td><td align='right'><b><i>" . number_format($descuento, 0, '.', '.')  . "</td></tr>";
                             echo "<tr><td><b><i>Total a Cobrar:</td><td align='right'><b><i>" . $total . "</td></tr>";
                             echo "</tbody>";
                             echo "</table>";
-                            echo "<input type='hidden' name='estudio' value='" . $estudio . "'>";
-                            echo "<input type='hidden' name='monto' value=" . $total . ">";
-                            echo "<input type='hidden' name='nacimiento' value=" . $nacimiento . ">";
+                            echo "<input type='hidden' name='seguro_id' value=" . $seguro_id . ">";
+                            echo "<input type='hidden' name='forma_pago_id' value='" . $forma_pago_id . "'>";
+                            echo "<input type='hidden' name='descuento' value='" . $descuento . "'>";
                             echo "<table class='table'><tr><td><input class='btn btn-primary' type='submit' value='Guardar'>&nbsp;&nbsp;&nbsp;<a class='btn btn-secondary' href='../Templates/orden.php'><i class='fa fa-fw fa-lg fa-times-circle'></i>Cancelar</a></td></tr></table>";
                             echo "</form>";
                             ?>

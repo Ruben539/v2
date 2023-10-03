@@ -1,4 +1,6 @@
 <?php
+print_r($_POST);
+exit();
 
 session_start();
 require_once("../Models/conexion.php");
@@ -13,20 +15,24 @@ if ($resultado > 0) {
 }
 date_default_timezone_set('America/Asuncion');
 
+//Datos para grabar en los comprobantes
+$ruc           = $_POST['ruc'];
+$razon_social  = $_POST['razon_social'];
+$paciente_id   = $_POST['paciente_id'];
+$doctor_id     = $_POST['doctor_id'];
+$usuario_1     = $idusuario;
+$comentario    = $_POST['comentario'];
+$estado        = 'En Espera';
 
-$ci         = $_POST['ci'];
-$nombre     = $_POST['nombre'];
-$seguro     = $_POST['seguro'];
-$estudio    = $_POST['estudio'];
+//Datos para grabar en el detalle de los comprobantes;
 $medico     = $_POST['medico'];
 $descuento  = $_POST['descuento'];
 $fecha      = date('d-m-Y H:i:s');
 $monto      = $_POST['monto'];
-$comentario = $_POST['comentario'];
-$nacimiento = $_POST['nacimiento'];
-$estado     = 'En Espera';
+
+
 $estatus    = 1;
-$usuario_1  = $idusuario;
+
 
 
 if (  $seguro == "Seguros"){
