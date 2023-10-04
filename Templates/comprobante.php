@@ -81,6 +81,7 @@ require_once('../Models/conexion.php');
                            // echo "<input type='hidden' name='estudios[]' value='" . $estudios . "'>";
                             $total = 0;
                             $estudio = '';
+                            $monto = 0;
                             for ($i = 0; $i < count($estudios); $i++) {
                                 $estudio =  $estudios[$i];
                         
@@ -89,17 +90,20 @@ require_once('../Models/conexion.php');
                                 echo "<tr><td>Montos a Cobrar: </td><td align='right'>";
                                 $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
                                 while ($results = mysqli_fetch_array($raw_results2)) {
+                                    $monto +=  $results['seguro'];
                                     echo "<input type='hidden' name='estudio_id[]' value='" .$results['id']. "'>";
                                     echo "<input type='hidden' name='descripcion[]' value='" .$results['nombre']. "'>";
                                     echo "<input type='hidden' name='monto[]' value='" .$results['seguro']. "'>";
                                     echo  number_format($results['seguro'], 0, '.', '.'). "</td></tr>";
                                     if ($results['nombre'] == 'Radiografias') {
-                                        $results = $results['seguro'] * $nro_rayos;
+                                        $total = $results['seguro'] * $nro_rayos;
+                                    }else{
+                                        $total +=  (int)$results['seguro'];
                                     }
-                                    $total =  (int)$results;
+                                    
                                 }
                             }
-
+                        
                             $total = $total - $descuento;
                             $total = number_format($total, 0, '.', '.');
                             if ($nro_rayos > 0) {
