@@ -1,20 +1,20 @@
 <?php
 
 require_once("../Models/conexion.php");
- 
+ $alert = '';
 
   
-    $Cedula        = $_POST['Cedula'];
-    $Nombre        = $_POST['Nombre'];
-    $Apellido      = $_POST['Apellido'];
-    $Sexo          = $_POST['Sexo'];
-    $Celular       = $_POST['Celular'];
-    $Nacimiento    = $_POST['Nacimiento'];
+    $Cedula        = $_POST['cedula'];
+    $nombre        = $_POST['nombre'];
+    $correo        = $_POST['correo'];
+    $telefono      = $_POST['telefono'];
+    $sexo          = $_POST['sexo'];
+    $fecha_nac     = $_POST['fecha_nac'];
 
 
     $resultado = 0;
 
-    $query = mysqli_query($conection, "SELECT * FROM clientes WHERE  cedula = '$Cedula'");
+    $query = mysqli_query($conection, "SELECT * FROM usuarios WHERE cedula = '$cedula' or correo = '$correo'");
     
     
     
@@ -24,8 +24,8 @@ require_once("../Models/conexion.php");
       echo $alert = '<p class = "msg_success">El Usuario ya existe</p>';
     } else {
 
-      $query_insert = mysqli_query($conection, "INSERT INTO clientes(Cedula,Apellido,Nombre,Nacimiento,Sexo,Celular)
-				VALUES('$Cedula','$Apellido','$Nombre','$Nacimiento','$Sexo','$Celular')");
+      $query_insert = mysqli_query($conection,"INSERT INTO usuarios(cedula,nombre,correo,telefono,sexo,fecha_nac)
+      VALUES('$cedula','$nombre','$correo','$telefono','$sexo','$fecha_nac')");
 
       if ($query_insert) {
         header('Location: ../Templates/registro.php');

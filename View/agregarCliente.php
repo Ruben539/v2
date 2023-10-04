@@ -1,6 +1,7 @@
 <?php
+require_once("../Controllers/grabarPaciente.php");
 require_once("../includes/header_admin.php");
-$alert = '';
+
 ?>
 
 
@@ -43,7 +44,7 @@ $alert = '';
 
                                 <div class="form-group">
                                     <label for="fecha_nac">Fecha de Nacimiento :</label>
-                                    <input type="text" class="form-control" id="fecha_nac" name="fecha_nac">
+                                    <input type="date" class="form-control" id="fecha_nac" name="fecha_nac">
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary mr-2">Registrar</button>

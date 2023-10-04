@@ -73,27 +73,30 @@ require_once('../Models/conexion.php');
                             <?php
                             echo "<form action='facturacion.php' method='post'>";
                             echo "<input type='hidden' name='ruc' value=" . $ci . ">";
-                            echo "<input type='hidden' name='razon_social' value=" . $nombre . ">";
+                            echo "<input type='hidden' name='razon_social' value='" . $nombre . "'>";
                             echo "<input type='hidden' name='paciente_id' value='" . $id . "'>";
                             echo "<input type='hidden' name='doctor_id' value='" . $doctor_id . "'>";
                             echo "<input type='hidden' name='comentario' value='" . $comentario . "'>";
+                           // echo "<input type='hidden' name='estudios[]' value='" . $estudios . "'>";
                           
                            // echo "<input type='hidden' name='estudios[]' value='" . $estudios . "'>";
                             $total = 0;
                             $estudio = '';
                             $monto = 0;
+                            $items = '';
                             for ($i = 0; $i < count($estudios); $i++) {
                                 $estudio =  $estudios[$i];
                         
                                 echo "<table class='table table-bordered'>";
                                 echo "<tbody>";
-                                echo "<tr><td>Montos a Cobrar: </td><td align='right'>";
+                                echo "<input type='hidden' name='estudios[]' value='" .trim($estudios[$i]). "'>";
                                 $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
                                 while ($results = mysqli_fetch_array($raw_results2)) {
                                     $monto +=  $results['seguro'];
-                                    echo "<input type='hidden' name='estudio_id[]' value='" .$results['id']. "'>";
-                                    echo "<input type='hidden' name='descripcion[]' value='" .$results['nombre']. "'>";
-                                    echo "<input type='hidden' name='monto[]' value='" .$results['seguro']. "'>";
+                                    echo "<tr><td>Estudio: ".$results['nombre']." </td><td align='right'>";
+                                   // echo "<input type='hidden' name='estudio_id[]' value='" .$results['id']. "'>";
+                                   // echo "<input type='hidden' name='descripcion[]' value='" .$results['nombre']. "'>";
+                                    //echo "<input type='hidden' name='monto[]' value='" .$results['seguro']. "'>";
                                     echo  number_format($results['seguro'], 0, '.', '.'). "</td></tr>";
                                     if ($results['nombre'] == 'Radiografias') {
                                         $total = $results['seguro'] * $nro_rayos;

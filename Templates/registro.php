@@ -44,7 +44,7 @@ require_once('../Models/conexion.php');
                     $option = '';
                     while ($data = mysqli_fetch_array($sql)) {
 
-                        $iduser     = $data['id'];
+                        $id         = $data['id'];
                         $cedula     = $data['cedula'];
                         $nombre     = $data['nombre'];
                         $telefono   = $data['telefono'];

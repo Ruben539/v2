@@ -17,11 +17,10 @@ require_once('../Extension/pedidoCancelacionOrden.php');
                             </p>
                             <form action="" method="POST">
                                 <input type="hidden" name="id" id="id" value="<?php echo $_REQUEST['id']; ?>">
-                                <input type="hidden" name="Cancelado" Cancelado="id" value="Si">
 
                                 <div class="form-group">
-                                    <label class="control-label"><span>Ingrese un sobre el pedido de la Cancelación</span></label>
-                                    <textarea class="form-control" type="text" name="Comentario" id="Comentario" placeholder="Ingrese su comentario" style="max-height: 170px;" required></textarea>
+                                    <label class="control-label"><span>Comentario de la Anulación</span></label>
+                                    <textarea class="form-control" type="text" name="motivo_anulado" id="motivo_anulado" placeholder="Ingrese su el motivo de la anulación" style="max-height: 170px;" required></textarea>
                                 </div>
                                 <input type="hidden" class="form-control" name="estatus" id="estatus" value="2">
 

@@ -4,6 +4,14 @@
 
 require_once("../Models/conexion.php");
 
+if(empty($_POST['inputCedula'])){
+  echo '<div class="btn btn-outline-primary btn-lg w-100 mt-4 mb-0">';
+    echo ' <p >';
+    echo 'Debe agragar la cedula a buscar.';
+    echo ' </p>';
+    echo '</div>';
+    exit();
+}
 
 $cedula = trim($_POST['inputCedula']);
 

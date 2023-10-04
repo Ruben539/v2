@@ -108,51 +108,54 @@ require_once("../includes/header_admin.php");
               <thead>
                 <tr>
                   <th class="ml-5">Nro</th>
-                  <th>ID</th>
-                  <th>Fecha</th>
-                  <th>Nombre</th>
-                  <th>Cedula</th>
+                  <th>Ruc </th>
+                  <th>Razon Social</th>
                   <th>Estudio</th>
-                  <th>Doctor/a</th>
-                  <th>Seguro</th>
                   <th>Monto</th>
-                  <th>Monto Seguro</th>
                   <th>Descuento</th>
+                  <th>Doctor</th>
+                  <th>Forma de Pago</th>
+                  <th>Seguro</th>
                   <th>Comentario</th>
+                  <th>Fecha</th>
                   <th>Anular</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
                 // $fecha1 = "05-01-2023";
-                $fecha =  date('d-m-Y');
+                $fecha =  date('Y-m-d');
                 //  echo $fecha1." ".$fecha2;
                 //  exit;
-                $sql = mysqli_query($conection, "SELECT DISTINCT(h.id),c.nombre,c.apellido,h.Estudio,h.Cedula,h.Atendedor,h.Fecha,h.Seguro,h.Monto,h.Descuento,h.MontoS,h.Comentario, h.fecha_2 
-                       FROM historial h inner join clientes c on c.cedula = h.cedula where  h.Fecha like '%$fecha%' AND h.Atendedor like '%PAZ%' AND h.estatus = 1 ORDER BY  h.id ASC");
+                $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio, SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
+                FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+                INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+                INNER JOIN seguros s ON s.id = dc.seguro_id
+                WHERE m.nombre like '%PAZ%' AND c.estatus = 1 GROUP BY c.id  ORDER BY  c.id ASC");
 
                 $resultado = mysqli_num_rows($sql);
                 $paz = 0;
+                $descuento = 0;
                 $nro = 0;
                 if ($resultado > 0) {
                   while ($data = mysqli_fetch_array($sql)) {
-                    $paz += (int)$data['Monto'];
+                    $paz += (int)$data['monto'];
+                    $descuento += (int)$data['descuento'];
                     $nro++;
                 ?>
                     <tr class="text-center">
 
                       <td><?php echo $nro ?></td>
-                      <td><?php echo $data['id']; ?></td>
-                      <td><?php echo $data['Fecha']; ?></td>
-                      <td><?php echo $data['nombre'] . ' ' . $data['apellido'];  ?></td>
-                      <td><?php echo $data['Cedula']; ?></td>
-                      <td><?php echo $data['Estudio']; ?></td>
-                      <td><?php echo $data['Atendedor']; ?></td>
-                      <td><?php echo $data['Seguro']; ?></td>
-                      <td><?php echo $data['Monto'] ?></td>
-                      <td><?php echo $data['MontoS'] ?></td>
-                      <td><?php echo $data['Descuento'] ?></td>
-                      <td><?php echo $data['Comentario'] ?></td>
+                      <td><?php echo $data['ruc']; ?></td>
+                      <td><?php echo $data['razon_social']; ?></td>
+                      <td><?php echo $data['estudio']; ?></td>
+                      <td><?php echo number_format($data['monto'],0, '.', '.'); ?></td>
+                      <td><?php echo number_format($data['descuento'],0, '.', '.'); ?></td>
+                      <td><?php echo $data['doctor'] ?></td>
+                      <td><?php echo $data['forma_pago'] ?></td>
+                      <td><?php echo $data['seguro'] ?></td>
+                      <td><?php echo $data['comentario'] ?></td>
+                      <td><?php echo $data['created_at'] ?></td>
 
 
 
@@ -172,7 +175,7 @@ require_once("../includes/header_admin.php");
             </table>
             <section>
               <p>Ingreso Total :</p>
-              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($paz, 3, '.', '.'); ?>.<b>GS</b></p>
+              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($paz - $descuento, 0, '.', '.'); ?>.<b>GS</b></p>
             </section>
           </div>
         </div>
@@ -184,62 +187,64 @@ require_once("../includes/header_admin.php");
     <div class="row">
       <div class="col-md-12">
         <div class="card">
-          <div class="titulos col-md-3">
-            <h3>Lista Diax <a class="btn btn-danger" href="../Reports/reporteDashboardDiario.php" target="_blank" rel="noopener noreferrer">
-                <i class="typcn typcn-user-add"></i> Reporte PDF
-              </a></h3>
-
+          <div class="titulos col-md-2">
+            <h3>Lista Diax</h3>
           </div>
           <div class="table-responsive pt-3">
             <table class="table table-striped project-orders-table text-center">
               <thead>
                 <tr>
                   <th class="ml-5">Nro</th>
-                  <th>ID</th>
-                  <th>Fecha</th>
-                  <th>Nombre</th>
-                  <th>Cedula</th>
+                  <th>Ruc </th>
+                  <th>Razon Social</th>
                   <th>Estudio</th>
-                  <th>Doctor/a</th>
-                  <th>Seguro</th>
                   <th>Monto</th>
-                  <th>Monto Seguro</th>
                   <th>Descuento</th>
+                  <th>Doctor</th>
+                  <th>Forma de Pago</th>
+                  <th>Seguro</th>
                   <th>Comentario</th>
+                  <th>Fecha</th>
                   <th>Anular</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
                 // $fecha1 = "05-01-2023";
-                $fecha =  date('d-m-Y');
+                $fecha =  date('Y-m-d');
                 //  echo $fecha1." ".$fecha2;
                 //  exit;
-                $sql = mysqli_query($conection, "SELECT DISTINCT(h.id),c.nombre,c.apellido,h.Estudio,h.Cedula,h.Atendedor,h.Fecha,h.Seguro,h.Monto,h.Descuento,h.MontoS,h.Comentario, h.fecha_2 
-                       FROM historial h inner join clientes c on c.cedula = h.cedula where  h.Fecha like '%$fecha%' AND h.Atendedor like '%DIAX%' AND h.estatus = 1 ORDER BY  h.id ASC");
+                $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio, SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
+                FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+                INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+                INNER JOIN seguros s ON s.id = dc.seguro_id
+                WHERE m.nombre like '%DIAX%' AND c.estatus = 1 GROUP BY c.id  ORDER BY  c.id ASC");
 
                 $resultado = mysqli_num_rows($sql);
                 $diax = 0;
+                $descuento = 0;
                 $nro = 0;
+                $total = 0;
                 if ($resultado > 0) {
                   while ($data = mysqli_fetch_array($sql)) {
-                    $diax += (int)$data['Monto'];
+                    $diax += (int)$data['monto'];
+                    $descuento += (int)$data['descuento'];
+                    $total = $diax - $descuento;
                     $nro++;
                 ?>
                     <tr class="text-center">
 
                       <td><?php echo $nro ?></td>
-                      <td><?php echo $data['id']; ?></td>
-                      <td><?php echo $data['Fecha']; ?></td>
-                      <td><?php echo $data['nombre'] . ' ' . $data['apellido'];  ?></td>
-                      <td><?php echo $data['Cedula']; ?></td>
-                      <td><?php echo $data['Estudio']; ?></td>
-                      <td><?php echo $data['Atendedor']; ?></td>
-                      <td><?php echo $data['Seguro']; ?></td>
-                      <td><?php echo $data['Monto'] ?></td>
-                      <td><?php echo $data['MontoS'] ?></td>
-                      <td><?php echo $data['Descuento'] ?></td>
-                      <td><?php echo $data['Comentario'] ?></td>
+                      <td><?php echo $data['ruc']; ?></td>
+                      <td><?php echo $data['razon_social']; ?></td>
+                      <td><?php echo $data['estudio']; ?></td>
+                      <td><?php echo number_format($data['monto'],0, '.', '.'); ?></td>
+                      <td><?php echo number_format($data['descuento'],0, '.', '.'); ?></td>
+                      <td><?php echo $data['doctor'] ?></td>
+                      <td><?php echo $data['forma_pago'] ?></td>
+                      <td><?php echo $data['seguro'] ?></td>
+                      <td><?php echo $data['comentario'] ?></td>
+                      <td><?php echo $data['created_at'] ?></td>
 
 
 
@@ -259,7 +264,7 @@ require_once("../includes/header_admin.php");
             </table>
             <section>
               <p>Ingreso Total :</p>
-              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($diax, 3, '.', '.'); ?>.<b>GS</b></p>
+              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($total, 0, '.', '.'); ?>.<b>GS</b></p>
             </section>
           </div>
         </div>
@@ -308,7 +313,7 @@ require_once("../includes/header_admin.php");
                       <td><?php echo $data['id'] ?></td>
                       <td><?php echo $data['created_at'] ?></td>
                       <td><?php echo $data['descripcion']; ?></td>
-                      <td><?php echo $data['monto']; ?></td>
+                      <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
                       <td>
                         <div class="d-flex align-items-center">
 
@@ -334,7 +339,7 @@ require_once("../includes/header_admin.php");
                 <td></td>
                 <td></td>
                 <td class="alert alert-success text-center">
-                  <?php echo number_format($gasto, 3, '.', '.'); ?>.<b>GS</b>
+                  <?php echo number_format($gasto, 0, '.', '.'); ?>.<b>GS</b>
                 </td>
 
 
@@ -342,11 +347,11 @@ require_once("../includes/header_admin.php");
             </table>
             <section>
               <?php
-              $rendicion = $diax - $gasto;
+              $rendicion = $total - $gasto;
 
               ?>
               <p>Rencion Final</p>
-              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($rendicion, 3, '.', '.'); ?>.<b>GS</b></p>
+              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($rendicion, 0, '.', '.'); ?>.<b>GS</b></p>
             </section>
           </div>
         </div>

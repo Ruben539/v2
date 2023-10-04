@@ -29,43 +29,55 @@ $estado        = 'En Espera';
 $query_comprobante = mysqli_query($conection, "INSERT INTO comprobantes(ruc,razon_social,paciente_id,doctor_id,usuario_1,comentario,estado) 
     VALUES('$ruc','$razon_social','$paciente_id','$doctor_id','$usuario_1','$comentario','$estado')");
 
-if($query_comprobante){
+if ($query_comprobante) {
 
   $hoy =  date('Y-m-d');
 
-$sql = mysqli_query($conection,"SELECT c.id FROM comprobantes c WHERE  c.created_at like '%$hoy%'  ORDER BY id DESC LIMIT 1 ");   
+  $sql = mysqli_query($conection, "SELECT c.id FROM comprobantes c WHERE  c.created_at like '%$hoy%'  ORDER BY id DESC LIMIT 1 ");
 
 
-$resultado = mysqli_num_rows($sql);
+  $resultado = mysqli_num_rows($sql);
 
-if ($resultado == 0) {
-     
-	header("location: ../Templates/dashboard.php");
-}else{
-	$option = '';
-	while ($data = mysqli_fetch_array($sql)) {
-		
-		$id   = $data['id'];
-		
+  if ($resultado == 0) {
 
-	}
-}
+    header("location: ../Templates/dashboard.php");
+  } else {
+    $option = '';
+    while ($data = mysqli_fetch_array($sql)) {
+
+      $id   = $data['id'];
+    }
+  }
   //Datos para grabar en el detalle de los comprobantes;
   $seguro_id       = $_POST['seguro_id'];
-  $descripcion     = $_POST['descripcion'];
-  $monto           = $_POST['monto'];
+  $estudios        = $_POST['estudios'];
+  $descripcion     = '';
+  $monto           = '';
   $forma_pago_id   = $_POST['forma_pago_id'];
   $descuento       = $_POST['descuento'];
   $comprobante_id  = $id;
-echo $comprobante_id;
-exit();
+
+  $estudio = '';
+
+  for ($i = 0; $i < count($estudios); $i++) {
+    $estudio =  $estudios[$i];
+
+    $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
+    while ($results = mysqli_fetch_array($raw_results2)) {
+     $id = $results['id'];
+      $descripcion = $results['nombre'];
+      $monto += (int)$results['seguro'];
+     // exit();
+      //Query para el grabado en la tabla del detalle de  comprobantes.
+      $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,descripcion,monto,seguro_id,forma_pago_id,descuento) 
+  VALUES('$comprobante_id','$id','$descripcion','$monto','$seguro_id','$forma_pago_id','$descuento')");
+    }
+  }
 }
-//Query para el grabado en la tabla del detalle de  comprobantes.
-  $comprobante = mysqli_query($conection, "INSERT INTO detalle_comprobantes(Cedula,Estudio,Atendedor,Fecha,Seguro,Monto,Descuento,Comentario,estado,estatus) 
-  VALUES('$ci','$estudio','$medico','$fecha','$seguro','$monto','$descuento','$comentario','$estado','$estatus')");
 
 
-if ($comprobante) {
+
+if ($quey_detalle) {
   header('location: Impresiones.php');
 } else {
   echo "<script>javascript:alert('Ha ocurrido un error');</script>";

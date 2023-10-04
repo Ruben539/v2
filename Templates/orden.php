@@ -31,7 +31,7 @@ require_once('../Models/conexion.php');
 
                             <div class="input-group input-group-outline mb-3"  id="carcedula">
                                 <label class="form-label"></label>
-                                <input type="text" class="form-control" placeholder="Ingrese la cedula del Paciente" id="inputCedula" name="inputCedula">
+                                <input type="text" class="form-control" placeholder="Ingrese la cedula del Paciente" id="inputCedula" name="inputCedula" require>
                             </div>
 
                             <button class="btn btn-success" type="submit">Buscar</button>

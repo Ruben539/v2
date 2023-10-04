@@ -1,5 +1,6 @@
 <?php
-
+//print_r($_POST);
+//exit();
 require_once("../Models/conexion.php");
 $alert = '';
 
@@ -7,21 +8,20 @@ $alert = '';
 if (!empty($_POST)) {
 
 
-    if (empty($_POST['id']) || empty($_POST['Cancelado']) || empty($_POST['estatus'])) {
+    if (empty($_POST['id']) || empty($_POST['motivo_anulado']) || empty($_POST['estatus'])) {
 
         $alert = '<p class = "msg_error">Debe llenar Todos los Campos</p>';
         
     } else {
 
-        $id           = $_POST['id'];
-        $Cancelado    = $_POST['Cancelado'];
-        $Comentario   = $_POST['Comentario'];
-        $estatus      = $_POST['estatus'];
+        $id               = $_POST['id'];
+        $motivo_anulado   = $_POST['motivo_anulado'];
+        $estatus          = $_POST['estatus'];
        
 
 
 
-        $query = mysqli_query($conection,"SELECT * FROM historial
+        $query = mysqli_query($conection,"SELECT * FROM comprobantes
 			WHERE  id != id"
         );
 
@@ -33,7 +33,7 @@ if (!empty($_POST)) {
     } else {
       
         
-        $sql_update = mysqli_query($conection, "UPDATE historial SET Cancelado = '$Cancelado',Comentario = '$Comentario', estatus = '$estatus'
+        $sql_update = mysqli_query($conection, "UPDATE comprobantes SET motivo_anulado = '$motivo_anulado', estatus = '$estatus'
 			WHERE id = $id");
 
         if ($sql_update) {
@@ -58,7 +58,7 @@ if (empty($_REQUEST['id'])) {
 
 $id = $_REQUEST['id'];
 
-$sql = mysqli_query($conection, "SELECT * FROM historial  WHERE id = $id");
+$sql = mysqli_query($conection, "SELECT * FROM comprobantes  WHERE id = $id");
 
 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -71,9 +71,8 @@ if ($resultado == 0) {
     $option = '';
     while ($data = mysqli_fetch_array($sql)) {
 
-        $id           = $data['id'];
-        $Cancelado    = $data['Cancelado'];
-        $Comentario   = $data['Comentario'];
+        $id                = $data['id'];
+        $motivo_anulado    = $data['motivo_anulado'];
     }
 }
 
