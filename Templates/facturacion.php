@@ -55,21 +55,20 @@ if ($query_comprobante) {
   $descuento       = $_POST['descuento'];
   $comprobante_id  = $id;
 
-
-  $descripcion     = '';
-  $monto           = '';
+ 
+   $descripcion     = '';
+   $monto           = '';
 
   for ($i = 0; $i < count($estudios); $i++) {
-    
-    $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='".$estudios[$i]."'") or die(mysqli_error($conection));
+  
+    $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
     while ($results = mysqli_fetch_array($raw_results2)) {
       $id = $results['id'];
       $descripcion = $results['nombre'];
       $monto += (int)$results['seguro'];
-    
-      $quey_detalle = mysqli_query($conection,"INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,descuento,seguro_id,forma_pago_id,descripcion) 
-  VALUES('$comprobante_id','$id','$monto','$descuento','$seguro_id','$forma_pago_id','$descripcion')");
     }
+    $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,descuento,seguro_id,forma_pago_id,descripcion) 
+    VALUES('$comprobante_id','$id','$monto','$descuento','$seguro_id','$forma_pago_id','$descripcion')");
   }
 }
 
