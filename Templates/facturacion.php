@@ -69,10 +69,10 @@ if ($query_comprobante) {
       $monto += (int)$results['seguro'];
      // exit();
       //Query para el grabado en la tabla del detalle de  comprobantes.
-      echo $comprobante_id.'-'.$id.'-'.$descripcion.'-'.$monto.'-'.$forma_pago_id.'-'.$descuento;
-      exit();
-      $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,descripcion,monto,seguro_id,forma_pago_id,descuento) 
-  VALUES('$comprobante_id','$id','$descripcion','$monto','$seguro_id','$forma_pago_id','$descuento')");
+     // echo $comprobante_id.'-'.$id.'-'.$descripcion.'-'.$monto.'-'.$forma_pago_id.'-'.$descuento;
+     // exit();
+      $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,descuento,seguro_id,forma_pago_id,descripcion) 
+  VALUES('$comprobante_id','$id','$monto','$descuento','$seguro_id','$forma_pago_id','$descripcion')");
     }
   }
 }
