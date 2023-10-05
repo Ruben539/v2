@@ -4,7 +4,7 @@
     require_once("../Models/conexion.php");
 ?>
     <?php
-      $sql = mysqli_query($conection,"SELECT SUM(MONTO) as monto FROM caja_chica where tipo_salida LIKE '%Ingreso%' AND estatus = 1;");   
+      $sql = mysqli_query($conection,"SELECT SUM(MONTO) as monto FROM empresa_movimientos where tipo_salida LIKE '%Ingreso%' AND estatus = 1");   
 
       //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
       
@@ -42,7 +42,7 @@
             </div>
 
             <?php
-      $sql = mysqli_query($conection,"SELECT SUM(MONTO) as monto FROM caja_chica where tipo_salida LIKE '%Egreso%' AND estatus = 1;");   
+      $sql = mysqli_query($conection,"SELECT SUM(MONTO) as monto FROM empresa_movimientos where tipo_salida LIKE '%Egreso%' AND estatus = 1;");   
 
       //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
       
@@ -50,7 +50,7 @@
       $resultado = mysqli_num_rows($sql);
       
       if ($resultado == 0) {
-        header("location: ../Plantillas/caja_chica.php");
+        header("location: ../Templates/dashboardFinaciero.php");
       }else{
         $montoEgreso = 0;
         while ($data = mysqli_fetch_array($sql)) {
@@ -121,7 +121,7 @@
                                     <?php
                                        $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.nro_cheque,c.tipo_salida,
                                        c.monto,c.concepto,c.usuario,c.created_at,fecha,c.aprobado,c.observacion
-                                       FROM caja_chica c where tipo_salida LIKE '%Ingreso%' AND c.estatus = 1 ");
+                                       FROM empresa_movimientos c where tipo_salida LIKE '%Ingreso%' AND c.estatus = 1 ");
                                   
                                     $resultado = mysqli_num_rows($sql);
                                     $row = 0;
@@ -177,7 +177,7 @@
                                     <?php
                                        $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.nro_cheque,c.tipo_salida,
                                        c.monto,c.concepto,c.usuario,c.created_at,fecha,c.aprobado,c.observacion
-                                       FROM caja_chica c where tipo_salida LIKE '%Egreso%' AND c.estatus = 1 ");
+                                       FROM empresa_movimientos c where tipo_salida LIKE '%Egreso%' AND c.estatus = 1 ");
                                   
                                     $resultado = mysqli_num_rows($sql);
                                     $row = 0;
@@ -233,7 +233,7 @@
                                     <?php
                                        $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.nro_cheque,c.tipo_salida,
                                        c.monto,c.concepto,c.usuario,c.created_at,fecha,c.aprobado,c.observacion
-                                       FROM caja_chica c where tipo_salida LIKE '%Deposito%' AND c.estatus = 1 ");
+                                       FROM empresa_movimientos c where tipo_salida LIKE '%Deposito%' AND c.estatus = 1 ");
                                   
                                     $resultado = mysqli_num_rows($sql);
                                     $row = 0;

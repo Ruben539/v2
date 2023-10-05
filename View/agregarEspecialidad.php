@@ -18,7 +18,7 @@ require_once('../Controllers/grabarEspecialidad.php');
                             <form class="forms-sample" method="POST" action="">
                                 <div class="form-group">
                                     <label class="control-label">Descripción</label>
-                                    <input class="form-control" type="text" name="descripcion" id="descripcion" placeholder="Ingrese el gasto" required>
+                                    <input class="form-control" type="text" name="descripcion" id="descripcion" placeholder="Ingrese la especialidad" required>
                                 </div>
 
 

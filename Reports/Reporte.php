@@ -4,10 +4,14 @@ session_start();
 
 require_once("../Models/conexion.php");
 
-$hoy =  date('d-m-Y');
+$hoy =  date('Y-m-d');
 
-$sql = mysqli_query($conection,"SELECT DISTINCT(h.id),c.Nombre,c.Apellido,c.Nacimiento,h.Estudio,h.Cedula,h.Atendedor,h.Fecha,h.Seguro,h.Monto,h.Descuento,h.MontoS,h.Comentario, h.fecha_2 
-FROM historial h inner join clientes c on c.cedula = h.cedula WHERE  h.Fecha like '%$hoy%'  ORDER BY h.id DESC LIMIT 1 ");   
+$sql = mysqli_query($conection,"SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,u.fecha_nac,u.nombre,
+SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
+FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+INNER JOIN seguros s ON s.id = dc.seguro_id INNER JOIN usuarios u ON u.id = c.paciente_id
+WHERE  c.created_at like '%$hoy%'  ORDER BY c.id DESC LIMIT 1 ");   
 
 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -24,18 +28,18 @@ if ($resultado == 0) {
 	$option = '';
 	while ($data = mysqli_fetch_array($sql)) {
 		
-		$id          = $data['id'];
-		$Cedula      = $data['Cedula'];
-		$Estudio     = $data['Estudio'];
-		$Atendedor   = $data['Atendedor'];
-		$Seguro      = $data['Seguro'];
-		$Monto       = $data['Monto'];
-		$Descuento   = $data['Descuento'];
-		$Comentario  = $data['Comentario'];
-		$Fecha       = $data['Fecha'];
-		$Nombre      = $data['Nombre'];
-		$Apellido    = $data['Apellido'];
-		$Nacimiento    = $data['Nacimiento'];
+		$id            = $data['id'];
+		$ruc           = $data['ruc'];
+		$razon_socual  = $data['razon_social'];
+		$medico        = $data['doctor'];
+		$seguro        = $data['seguro'];
+		$estudio       = $data['estudio'];
+		$monto         = number_format($data['monto'],0, '.', '.');
+		$descuento     = number_format($data['descuento'],0, '.', '.');
+		$comentario    = $data['comentario'];
+		$created_at    = $data['created_at'];
+		$nombre        = $data['nombre'];
+		$fecha_nac     = $data['fecha_nac'];
 
 	}
 }
@@ -48,7 +52,8 @@ ob_start();
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="http://<?php echo $_SERVER['HTTP_HOST']; ?>/sistema_diax/bootstrap/dist/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" type="text/css" href="http://<?php echo $_SERVER['HTTP_HOST']; ?>/sistemadiax/bootstrap/dist/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" type="text/css" href="http://<?php echo $_SERVER['HTTP_HOST']; ?>/sistemadiax/bootstrap/dist/css/bootstrap.min.css">
   <title>Reporte de Comprobantes</title>
 </head>
 
@@ -82,13 +87,13 @@ ob_start();
                 
                     <tr class="text-center">
 
-                    <td><?php echo $Cedula; ?></td>
-                    <td><?php echo $Nombre.' '.$Apellido; ?></td>
-                    <td><?php echo $Nacimiento; ?></td>
-                    <td><?php echo $Fecha; ?></td>
-                    <td><?php echo $Estudio; ?></td>
-                    <td><?php echo $Atendedor; ?></td>
-                    <td><?php echo $Monto; ?></td>
+                    <td><?php echo $ruc; ?></td>
+                    <td><?php echo $nombre; ?></td>
+                    <td><?php echo $fecha_nac; ?></td>
+                    <td><?php echo $created_at; ?></td>
+                    <td><?php echo $estudio; ?></td>
+                    <td><?php echo $medico; ?></td>
+                    <td><?php echo $monto; ?></td>
                     <td><?php echo $id; ?></td>
                 
                     </tr>
@@ -122,15 +127,15 @@ ob_start();
                 
                     <tr class="text-center">
 
-                    <td><?php echo $Cedula; ?></td>
-                    <td><?php echo $Nombre.' '.$Apellido; ?></td>
-                    <td><?php echo $Nacimiento; ?></td>
-                    <td><?php echo $Fecha; ?></td>
-                    <td><?php echo $Estudio; ?></td>
-                    <td><?php echo $Atendedor; ?></td>
-                    <td><?php echo $Monto; ?></td>
-                    <td><?php echo $Descuento; ?></td>
-                    <td><?php echo $Seguro; ?></td>
+                    <td><?php echo $ruc; ?></td>
+                    <td><?php echo $nombre; ?></td>
+                    <td><?php echo $fecha_nac; ?></td>
+                    <td><?php echo $created_at; ?></td>
+                    <td><?php echo $estudio; ?></td>
+                    <td><?php echo $medico; ?></td>
+                    <td><?php echo $monto; ?></td>
+                    <td><?php echo $descuento; ?></td>
+                    <td><?php echo $seguro; ?></td>
                     <td><?php echo $id; ?></td>
                 
                     </tr>

@@ -3,4 +3,4 @@
 $usuarioBD="root";
 $passBD="";
 $ipBD="localhost";
-$nombreBD= "paula";
+$nombreBD= "sistemadiax";

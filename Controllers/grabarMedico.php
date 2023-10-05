@@ -19,7 +19,7 @@ if (!empty($_POST)) {
             $fecha_nac    = $_POST['fecha_nac'];
                        
 
-        $query = mysqli_query($conection,"SELECT * FROM medicos WHERE telefono = '$telefono' or cedula = '$cedula'");
+        $query = mysqli_query($conection,"SELECT * FROM medicos WHERE telefono = '$telefono'");
 
         $resultado = mysqli_fetch_array($query);
 

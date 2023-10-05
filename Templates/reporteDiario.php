@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -37,9 +37,10 @@ require_once('../Models/conexion.php');
 
                     <div class="col-md-10">
                         <div class="widget-small">
-                            <select name="diax" id="diax" class="form-control">
+                            <select name="valor" id="valor" class="form-control">
                                 <option value="">Seleccione una opción.........</option>
-                                <option value="Diax">Diax</option>
+                                <option value="DIAX">Diax</option>
+                                <option value="PAZ">PAZ</option>
                             </select>
                         </div>
                     </div>

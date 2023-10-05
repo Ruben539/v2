@@ -73,7 +73,7 @@ $.ajax({
     }
 }).done(function(datos){
 //Logica de respuesta  de los datos
-$("#idMontoDiax").text(parseFloat(datos).toLocaleString()+" "+"000.GS");
+$("#idMontoDiax").text(parseFloat(datos).toLocaleString()+" "+".GS");
 });
 
 //Consulta de la Sentencia para recuperar los datos de Pacientes por Doctor en Atendidos
@@ -90,7 +90,7 @@ $.ajax({
     }
 }).done(function(datos){
 //Logica de respuesta  de los datos
-$("#idMontoPaz").text(parseFloat(datos).toLocaleString()+" "+"000.GS");
+$("#idMontoPaz").text(parseFloat(datos).toLocaleString()+" "+".GS");
 });
 
 $.ajax({
@@ -106,7 +106,7 @@ $.ajax({
     }
 }).done(function(datos){
 //Logica de respuesta  de los datos
-$("#idTotalMonto").text(parseFloat(datos).toLocaleString()+" "+"000.GS");
+$("#idTotalMonto").text(parseFloat(datos).toLocaleString()+" "+".GS");
 });
 
 

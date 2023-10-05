@@ -35,10 +35,11 @@ class MYSQL {
 	//Codigo sirve para traer los parametros para las vistas
 	public function getPacientePaz(){
 		$idPacientePaz = 0;
-		$fecha =  date('d-m-Y');
+		$fecha =  date('Y-m-d');
 		// $anio =  date('Y');
 		try{
-			$strQuery = "SELECT count(*) tpacientes  FROM historial  where Fecha LIKE '%$fecha%' AND Atendedor like '%PAZ%' AND estatus = 1";
+			$strQuery = "SELECT count(*) tpacientes  FROM comprobantes c inner join medicos m ON m.id = c.doctor_id 
+			where c.created_at LIKE '%$fecha%' AND m.nombre like '%PAZ%' AND c.estatus = 1";
 			//$strQuery = "SELECT COUNT(*) from clientes WHERE year(FechaIngreso)= $anio AND month(FechaIngreso)= $mes ";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
@@ -54,10 +55,11 @@ class MYSQL {
 
 	public function getPacienteDiax(){
 		$idPacienteDiax = 0;
-		$fecha =  date('d-m-Y');
+		$fecha =  date('Y-m-d');
 		// $anio =  date('Y');
 		try{
-			$strQuery = "SELECT count(*) tpacientes  FROM historial  where Fecha LIKE '%$fecha%' AND Atendedor like '%DIAX%' AND estatus = 1";
+			$strQuery = "SELECT count(*) tpacientes  FROM comprobantes c inner join medicos m ON m.id = c.doctor_id 
+			where c.created_at LIKE '%$fecha%' AND m.nombre like '%DIAX%' AND c.estatus = 1";
 			//$strQuery = "SELECT COUNT(*) from clientes WHERE year(FechaIngreso)= $anio AND month(FechaIngreso)= $mes ";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
@@ -74,10 +76,11 @@ class MYSQL {
 	//Codigo sirve para traer los parametros para las de los Pacientes en espera
 	public function getTotalPacientes(){
 		$idTotalPacientes = 0;
-		$fecha  =  date('d-m-Y');
+		$fecha  =  date('Y-m-d');
 
 		try{
-			$strQuery = "SELECT count(*) tpacientes  FROM historial where Fecha LIKE '%".$fecha."%' AND estatus = 1";
+			$strQuery = "SELECT count(*) tpacientes  FROM comprobantes c inner join medicos m ON m.id = c.doctor_id 
+			where c.created_at LIKE '%$fecha%' AND c.estatus = 1";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
 				$pQuery->execute();
@@ -93,10 +96,13 @@ class MYSQL {
 	//Codigo sirve para traer los parametros para las de los Pacientes Atendidos
 	public function getMontoDiax(){
 		$idMontoDiax = 0;
-		$fecha  =  date('d-m-Y');
+		$fecha  =  date('Y-m-d');
 
 		try{
-			$strQuery = "SELECT SUM(monto) tmontoDiax  FROM historial  where Fecha LIKE '%$fecha%' AND Atendedor LIKE '%DIAX%' AND estatus = 1";
+			$strQuery = "SELECT (SUM(dc.monto) - dc.descuento) tmontoDiax  FROM comprobantes c 
+			INNER JOIN medicos m ON m.id = c.doctor_id 
+			INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+			where c.created_at LIKE '%$fecha%' AND m.nombre like '%DIAX%' AND c.estatus = 1";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
 				$pQuery->execute();
@@ -112,10 +118,13 @@ class MYSQL {
 	//Codigo sirve para traer los parametros para las de los Pacientes totales en el mes
 	public function getMontoPaz(){
 		$idMontoPaz = 0;
-		$fecha  =  date('d-m-Y');
+		$fecha  =  date('Y-m-d');
 	
 		try{
-			$strQuery = "SELECT SUM(monto) tmontoPaz  FROM historial  where Fecha LIKE '%$fecha%' AND Atendedor LIKE '%PAZ%' AND estatus = 1";
+			$strQuery = "SELECT (SUM(dc.monto) - dc.descuento) tmontoDiax  FROM comprobantes c 
+			INNER JOIN medicos m ON m.id = c.doctor_id 
+			INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+			where c.created_at LIKE '%$fecha%' AND m.nombre like '%PAZ%' AND c.estatus = 1";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
 				$pQuery->execute();
@@ -131,9 +140,12 @@ class MYSQL {
 
 	public function getMontoTotal(){
 		$idTotalMonto = 0;
-		$fecha  =  date('d-m-Y');
+		$fecha  =  date('Y-m-d');
 		try{
-			$strQuery = "SELECT SUM(monto) tmontoTotal  FROM historial  where Fecha LIKE '%$fecha%' AND estatus = 1 ";
+			$strQuery = "SELECT (SUM(dc.monto) - dc.descuento) tmontoDiax  FROM comprobantes c 
+			INNER JOIN medicos m ON m.id = c.doctor_id 
+			INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+			where c.created_at LIKE '%$fecha%'  AND c.estatus = 1";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
 				$pQuery->execute();
@@ -149,7 +161,7 @@ class MYSQL {
 	public function getEliminacionOrdenes(){
 		$idNotificacionPen = 0;
 		try{
-			$strQuery = "SELECT COUNT(*) as tNotificacion FROM historial WHERE estatus = 2";
+			$strQuery = "SELECT COUNT(*) as tNotificacion FROM comprobantes WHERE estatus = 2";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
 				$pQuery->execute();
@@ -197,41 +209,6 @@ class MYSQL {
 		return $idNotificacionMedico;
 	}
 
-	public function getGastos(){
-		$idGastos = 0;
-		$mes = date('m');
-		$anio = date('Y');
-		try{
-			$strQuery = "SELECT COUNT(*) as tNotificacion FROM gastos WHERE estatus = 2";
-			if($this->conexBDPDO()){
-				$pQuery =$this->oConBD->prepare($strQuery);
-				$pQuery->execute();
-				$idGastos= $pQuery->fetchColumn();
-			}
-		}catch(PDOException $e){
-			echo "MYSQL.getGastos: ". $e->getMessage(). "\n";
-			return -1;
-		}
-		return $idGastos;
-	}
-
-	public function getGastosPen(){
-		$idGastosPen = 0;
-		$mes = date('m');
-		$anio = date('Y');
-		try{
-			$strQuery = "SELECT COUNT(*) as tNotificacion FROM gastos WHERE estatus = 2";
-			if($this->conexBDPDO()){
-				$pQuery =$this->oConBD->prepare($strQuery);
-				$pQuery->execute();
-				$idGastosPen= $pQuery->fetchColumn();
-			}
-		}catch(PDOException $e){
-			echo "MYSQL.getGastos: ". $e->getMessage(). "\n";
-			return -1;
-		}
-		return $idGastosPen;
-	}
 
 	/*//Codigo para recuperar los datos para la grafica
 	public function getDatosGrafica(){

@@ -131,7 +131,7 @@ require_once("../includes/header_admin.php");
                 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
                 INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
                 INNER JOIN seguros s ON s.id = dc.seguro_id
-                WHERE m.nombre like '%PAZ%' AND c.estatus = 1 GROUP BY c.id  ORDER BY  c.id ASC");
+                WHERE m.nombre like '%PAZ%'  AND c.created_at LIKE '%". $fecha."%' AND c.estatus = 1 GROUP BY c.id  ORDER BY  c.id ASC");
 
                 $resultado = mysqli_num_rows($sql);
                 $paz = 0;
@@ -218,7 +218,7 @@ require_once("../includes/header_admin.php");
                 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
                 INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
                 INNER JOIN seguros s ON s.id = dc.seguro_id
-                WHERE m.nombre like '%DIAX%' AND c.estatus = 1 GROUP BY c.id  ORDER BY  c.id ASC");
+                WHERE m.nombre like '%DIAX%' AND c.created_at LIKE '%". $fecha."%' AND c.estatus = 1 GROUP BY c.id  ORDER BY  c.id ASC");
 
                 $resultado = mysqli_num_rows($sql);
                 $diax = 0;
