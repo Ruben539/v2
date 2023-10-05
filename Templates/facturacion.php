@@ -64,11 +64,13 @@ if ($query_comprobante) {
 
     $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
     while ($results = mysqli_fetch_array($raw_results2)) {
-     $id = $results['id'];
+      $id = $results['id'];
       $descripcion = $results['nombre'];
       $monto += (int)$results['seguro'];
      // exit();
       //Query para el grabado en la tabla del detalle de  comprobantes.
+      echo $comprobante_id.'-'.$id.'-'.$descripcion.'-'.$monto.'-'.$forma_pago_id.'-'.$descuento;
+      exit();
       $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,descripcion,monto,seguro_id,forma_pago_id,descuento) 
   VALUES('$comprobante_id','$id','$descripcion','$monto','$seguro_id','$forma_pago_id','$descuento')");
     }
