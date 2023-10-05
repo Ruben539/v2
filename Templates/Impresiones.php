@@ -1,6 +1,26 @@
 <?php
+require_once("../Models/conexion.php");
 require_once("../includes/header_admin.php");
 
+$hoy =  date('Y-m-d');
+
+$sql = mysqli_query($conection, "SELECT c.id FROM comprobantes c WHERE  c.created_at like '%$hoy%'  ORDER BY id DESC LIMIT 1 ");
+
+
+$resultado = mysqli_num_rows($sql);
+
+if ($resultado == 0) {
+
+  header("location: ../Templates/dashboard.php");
+} else {
+  $option = '';
+  while ($data = mysqli_fetch_array($sql)) {
+
+    $id   = $data['id'];
+  }
+}
+
+echo $id;
 
 ?>
 
@@ -59,6 +79,7 @@ require_once("../includes/header_admin.php");
                                             <i class="typcn typcn-credit-card icon-xl text-secondary"></i>
                                         </div>
                                         <form action="../Reports/Reporte.php" target="_blank">
+                                            <input type="hidden" name="id" id="id" value="<?php echo $id;?>">
                                             <button type="submit" class="btn btn-info">Reporte</button>
                                         </form>
                                     </div>

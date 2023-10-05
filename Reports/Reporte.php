@@ -1,17 +1,17 @@
 <?php 
 
 session_start();
-
 require_once("../Models/conexion.php");
 
 $hoy =  date('Y-m-d');
+$id = $_REQUEST['id'];
 
 $sql = mysqli_query($conection,"SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,u.fecha_nac,u.nombre,
 SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
 INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
 INNER JOIN seguros s ON s.id = dc.seguro_id INNER JOIN usuarios u ON u.id = c.paciente_id
-WHERE  c.created_at like '%$hoy%'  ORDER BY c.id DESC LIMIT 1 ");   
+WHERE c.id = '".$id."' AND c.created_at like '%$hoy%'  ORDER BY c.id DESC LIMIT 1 ");   
 
 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
