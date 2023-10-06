@@ -32,7 +32,7 @@ require_once('../Models/conexion.php');
                                         <th>Seguro</th>
                                         <th>Preferencial</th>
                                         <th>Hospitalario</th>
-                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ) { ?>
+                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 || $_SESSION['rol'] == 5 ) { ?>
                                             <th>Editar</th>
                                             <th>Eliminar</th>
                                         <?php } ?>
@@ -75,7 +75,7 @@ require_once('../Models/conexion.php');
                                                 <?php } ?>
 
 
-                                                <?php if ($_SESSION['rol'] == 2) { ?>
+                                                <?php if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 5) { ?>
                                                     <td>
                                                         <a href="#" onclick="permisoAuto()" class="btn btn-outline-danger" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-trash"></i></a>
                                                     </td>
