@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 || $_SESSION['rol'] == 5) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -33,22 +33,23 @@ require_once('../Models/conexion.php');
                                         <th>Correo</th>
                                         <th>Telefono</th>
                                         <th>Fecha de Nacimiento</th>
-                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  || $_SESSION['rol'] == 5) { ?>
-                                            <th>Editar</th>
+                                        <th>Editar</th>
+                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  ) { ?>
                                             <th>Agregar</th>
+                                            <th>Eliminar</th>
                                         <?php } ?>
-                                        <th>Eliminar</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                 if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
+                                 if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
                                     $sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.correo,m.telefono,m.fecha_nac,m.usuario FROM medicos m 
                                             WHERE m.estatus = 1 ORDER BY  m.id DESC");
                                             
                                   } else if ($_SESSION['rol'] == 5) {
                     
-                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.correo,m.telefono,m.fecha_nac FROM especialidad_doctores ed
+                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.correo,m.telefono,m.fecha_nac,m.usuario FROM especialidad_doctores ed
                                     INNER JOIN medicos m ON m.id = ed.doctor_id
                                     INNER JOIN especialidades e ON e.id = ed.especialidad_id
                                     WHERE e.id = 3 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
@@ -68,30 +69,32 @@ require_once('../Models/conexion.php');
                                                 <td><?php echo $data['fecha_nac'] ?></td>
                                 
 
-                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  || $_SESSION['rol'] == 5 || $_SESSION['rol'] == 6) { ?>
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  || $_SESSION['rol'] == 3|| $_SESSION['rol'] == 5) { ?>
                                                     <td>
                                                         <a href="../View/modificarMedico.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-edit"></i></a>
                                                     </td>
                                                 <?php } ?>
 
 
-                                                <?php if ($_SESSION['rol'] == 1) { ?>
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
                                                     <td>
                                                         <a href="../View/credencialesMedico.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-user-add" aria-hidden="true"></i>
                                                         </a>
                                                     </td>
                                                 <?php } ?>
 
-                                                <?php if ($_SESSION['rol'] == 2 || $_SESSION['rol'] == 5 || $_SESSION['rol'] == 6) { ?>
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ) { ?>
                                                     <td>
                                                         <a href="#" onclick="permisoAuto()" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-user-add"></i></a>
                                                     </td>
                                                 <?php } ?>
-
+                                                
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
                                                 <td>
                                                     <button class="btn btn-outline-danger" onclick="EliminarDoctor('<?php echo $data['id'] ?>')"><i class="typcn typcn-user-delete" aria-hidden="true"></i></button>
 
                                                 </td>
+                                                <?php } ?>
                                             </tr>
 
 

@@ -32,7 +32,7 @@ require_once('../Models/conexion.php');
                                         <th>Seguro</th>
                                         <th>Preferencial</th>
                                         <th>Hospitalario</th>
-                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
+                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ) { ?>
                                             <th>Editar</th>
                                             <th>Eliminar</th>
                                         <?php } ?>
@@ -67,11 +67,12 @@ require_once('../Models/conexion.php');
                                                         <a href="../View/modificarEstudios.php?id=<?php echo $ver[0]; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-edit"></i></a>
                                                     </td>
                                                 <?php } ?>
-
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
                                                 <td>
                                                     <button class="btn btn-outline-danger" onclick="EliminarEstudio('<?php echo $ver[0] ?>')"><i class="typcn typcn-trash" aria-hidden="true"></i></button>
 
                                                 </td>
+                                                <?php } ?>
 
 
                                                 <?php if ($_SESSION['rol'] == 2) { ?>

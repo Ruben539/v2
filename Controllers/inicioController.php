@@ -49,7 +49,7 @@ if (!empty($_SESSION['active'])) {
         
 
 
-        if ($_SESSION['rol'] == 1 ) {
+        if ($_SESSION['rol'] == 1  || $_SESSION['rol'] == 2 ||$_SESSION['rol'] == 3 ||$_SESSION['rol'] == 5) {
          header('Location: Templates/dashboard.php');
 
        }

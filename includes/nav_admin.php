@@ -1,3 +1,4 @@
+
 <nav class="navbar-breadcrumb col-xl-12 col-12 d-flex flex-row p-0">
    
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
@@ -46,12 +47,14 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
+          
           <li class="nav-item">
             <a class="nav-link" href="../Templates/dashboard.php">
               <i class="typcn typcn-device-desktop menu-icon"></i>
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
               <i class="typcn typcn-group menu-icon"></i>
@@ -65,6 +68,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#form-elements" aria-expanded="false" aria-controls="form-elements">
               <i class="typcn typcn-vendor-android menu-icon"></i>
@@ -77,6 +83,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 || $_SESSION['rol'] == 5){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#charts" aria-expanded="false" aria-controls="charts">
               <i class="typcn typcn-device-desktop menu-icon"></i>
@@ -89,6 +98,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 5){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#fabiola" aria-expanded="false" aria-controls="fabiola">
               <i class="typcn typcn-device-desktop menu-icon"></i>
@@ -103,6 +115,8 @@
               </ul>
             </div>
           </li>
+          
+          
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#elena" aria-expanded="false" aria-controls="elena">
               <i class="typcn typcn-device-desktop menu-icon"></i>
@@ -117,6 +131,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 ){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#comprobantes" aria-expanded="false" aria-controls="comprobantes">
               <i class=" typcn typcn-clipboard menu-icon"></i>
@@ -131,6 +148,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 || $_SESSION['rol'] == 5){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#medicos" aria-expanded="false" aria-controls="medicos">
               <i class="typcn typcn-group-outline menu-icon"></i>
@@ -145,6 +165,9 @@
               </ul>
             </div>
           </li>
+         
+
+
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#especialidad" aria-expanded="false" aria-controls="especialidad">
               <i class="typcn typcn-flow-merge menu-icon"></i>
@@ -159,6 +182,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#icons" aria-expanded="false" aria-controls="icons">
               <i class="typcn typcn-trash menu-icon"></i>
@@ -174,6 +200,7 @@
               </ul>
             </div>
           </li>
+
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="typcn typcn-flow-children menu-icon"></i>
@@ -188,6 +215,8 @@
               </ul>
             </div>
           </li>
+        
+          
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#seguros" aria-expanded="false" aria-controls="seguros">
               <i class="typcn typcn-contacts menu-icon"></i>
@@ -200,6 +229,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 ){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
               <i class="typcn typcn-clipboard menu-icon"></i>
@@ -213,7 +245,9 @@
               </ul>
             </div>
           </li>
+          <?php }?>
 
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 ){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#financiero" aria-expanded="false" aria-controls="financiero">
               <i class="typcn typcn-clipboard menu-icon"></i>
@@ -227,7 +261,7 @@
               </ul>
             </div>
           </li>
-
+          <?php }?>
           <li class="nav-item">
             <a class="nav-link" href="https://bootstrapdash.com/demo/polluxui-free/docs/documentation.html">
               <i class="typcn typcn-mortar-board menu-icon"></i>
