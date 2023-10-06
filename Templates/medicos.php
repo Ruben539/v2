@@ -48,7 +48,7 @@ require_once('../Models/conexion.php');
                                             
                                   } else if ($_SESSION['rol'] == 5) {
                     
-                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,e.descripcion FROM especialidad_doctores ed
+                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.correo,m.telefono,m.fecha_nac FROM especialidad_doctores ed
                                     INNER JOIN medicos m ON m.id = ed.doctor_id
                                     INNER JOIN especialidades e ON e.id = ed.especialidad_id
                                     WHERE e.id = 3 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
