@@ -83,7 +83,7 @@ require_once('../Models/conexion.php');
                                                     </td>
                                                 <?php } ?>
 
-                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ) { ?>
+                                                <?php if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 5 ) { ?>
                                                     <td>
                                                         <a href="#" onclick="permisoAuto()" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-user-add"></i></a>
                                                     </td>
