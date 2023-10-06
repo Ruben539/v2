@@ -37,7 +37,7 @@ require_once('../Models/conexion.php');
                     FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
                     INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
                     INNER JOIN seguros s ON s.id = dc.seguro_id
-                    WHERE c.paciente_id = '".$query."' AND c.estatus = 1 AND c.informante_id is NULL GROUP BY c.id  ORDER BY  c.id ASC") or die(mysqli_error($conection));
+                    WHERE c.id = '".$query."' AND  m.nombre like '%Fabiola%'  AND c.estatus = 1 AND c.informante_id is NULL GROUP BY c.id  ORDER BY  c.id ASC") or die(mysqli_error($conection));
                     #WHERE (`Cedula` LIKE '%".$query."%')") or die(mysql_error());
                     echo "<div class='bs-component'>";
                     echo "<div class='card'>";

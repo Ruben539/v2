@@ -27,7 +27,7 @@ c.created_at,c.estatus,c.nro_placas
 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
 INNER JOIN medicos m ON m.id = c.informante_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
 INNER JOIN seguros s ON s.id = dc.seguro_id INNER JOIN usuarios u ON u.id = c.paciente_id
-WHERE date(c.created_at) BETWEEN '".$desde."' AND '".$hasta."'   GROUP BY c.id");
+WHERE date(c.created_at) BETWEEN '".$desde."' AND '".$hasta."' AND c.informante_id = '".$doctor_id."'  GROUP BY c.id");
 
 }
 

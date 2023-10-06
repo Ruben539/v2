@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 6) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 5) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -27,7 +27,7 @@ require_once('../Models/conexion.php');
                             </div>
                    
                     <div class="tile-footer">
-                        <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i>Comenzar</button>&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary" href="../Templates/dashboard.php"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i>Comenzar</button>&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary" href="../Historial/PendientesAsignacion.php"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
                     </div>
                     </form>
                     </div>

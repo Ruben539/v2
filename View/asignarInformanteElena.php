@@ -1,6 +1,6 @@
 <?php
 require_once("../includes/header_admin.php");
-require_once('../Controllers/AsignarInformanteElena.php');
+require_once('../Controllers/AsignarInformanteFabiola.php');
 ?>
 
 
@@ -11,37 +11,35 @@ require_once('../Controllers/AsignarInformanteElena.php');
                 <div class="col-md-6 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title text-center">Asignar Informante <i class="typcn typcn-user"></i></h4>
+                            <h4 class="card-title text-center">Asignar Informante<i class="typcn typcn-calculator"></i></h4>
                             <p class="card-description text-center">
-                                Asignar Informante a la Orden de
+                            datos del informante a seleccionar
                             </p>
-                            <form action="" method="POST">
-                                <div class="form-group">
-                                    <input class="form-control" type="hidden" name="id" id="id" value="<?php echo $_REQUEST['id']; ?>">
-                                </div>
-                                <div class="form-group">
-                                    <input class="form-control" type="hidden" name="Informa" id="Informa" placeholder="Ingrese el Informa" value="<?php echo $Informa; ?>">
-                                </div>
+                            <form class="forms-sample" method="POST" action="">
+                                <input type="hidden" name="id" id="id" value="<?php echo $_REQUEST['id']; ?>">
                                 <div class="form-group">
                                     <label class="control-label">Medico Informante</label>
                                     <?php
                                     include "../Models/conexion.php";
 
-                                    $query_medicos = mysqli_query($conection, "SELECT * FROM medicos where Especialidad like '%Informante%'");
+                                    $query_medicos = mysqli_query($conection, "SELECT m.id,m.nombre,e.descripcion FROM especialidad_doctores ed
+                                    INNER JOIN medicos m ON m.id = ed.doctor_id
+                                    INNER JOIN especialidades e ON e.id = ed.especialidad_id
+                                    WHERE e.id = 3 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
 
                                     mysqli_close($conection); //con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
                                     $resultado = mysqli_num_rows($query_medicos);
 
                                     ?>
-                                    <select name="Informa" id="Informa" class="chosen form-control">
+                                    <select name="informante_id" id="informante_id" class="chosen form-control">
                                         <?php
 
                                         if ($resultado > 0) {
                                             while ($medico = mysqli_fetch_array($query_medicos)) {
 
                                         ?>
-                                                <option value="<?php echo $medico["Nombre"]; ?>"><?php echo
-                                                                                                    $medico["Nombre"] ?></option>
+                                                <option value="<?php echo $medico["id"]; ?>"><?php echo
+                                                     $medico["nombre"] ?></option>
 
                                         <?php
 
@@ -53,20 +51,22 @@ require_once('../Controllers/AsignarInformanteElena.php');
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label">Numero de Placas</label>
-                                    <input class="form-control" type="number" name="Placas" id="Placas" placeholder="Ingrese el numero de Placas">
+                                    <label class="control-label"> Nro de Palcas</label>
+                                    <input class="form-control" type="number" name="nro_placas" id="nro_placas" placeholder="Ingrese el monto" required value="<?php echo $descripcion; ?>">
                                 </div>
 
 
-                                <div class="tile-footer">
-                                    <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i>Asignar</button>&nbsp;&nbsp;&nbsp;<a class="btn btn-secondary" href="../Templates/listadoPacientesElena.php"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
-
-                                </div>
+                                <button type="submit" class="btn btn-primary mr-2">Actualizar</button>
+                                <a class="btn btn-light" href="../Templates/listadoPacientesElena.php">Cancelar</a>
+                                <br>
+                                <?php if ($alert != "") {  ?>
+                                    <div class="btn btn-outline-primary btn-lg w-100 mt-4 mb-0">
+                                        <p style="color:#fff;">
+                                            <?php echo $alert; ?>
+                                        </p>
+                                    </div>
+                                <?php } ?>
                             </form>
-                            <br>
-                            <?php if (isset($alert)) { ?>
-                                <div class="alert alert-info text-center"><?php echo  $alert; ?></div>
-                            <?php } ?>
                         </div>
                     </div>
                 </div>

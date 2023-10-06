@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 ||  $_SESSION['rol'] == 5) {
+if ($_SESSION['rol'] == 1 ||  $_SESSION['rol'] == 2 || $_SESSION['rol'] == 5) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -34,14 +34,16 @@ require_once('../Models/conexion.php');
                                     <table id="tabla_Usuario" class="table table-striped table-bordered table-condensed" style="width:100%">
                                         <thead>
                                             <tr class="text-center">
-                                                <th>ID</th>
-                                                <th>Nombre</th>
+                                                <th class="ml-5">Nro</th>
+                                                <th>Ruc </th>
+                                                <th>Razon Social</th>
                                                 <th>Estudio</th>
+                                                <th>Monto</th>
+                                                <th>Descuento</th>
                                                 <th>Doctor</th>
-                                                <th>Placas</th>
-                                                <th>Informante</th>
+                                                <th>Comentario</th>
                                                 <th>Fecha</th>
-                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 6) { ?>
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 5) { ?>
                                                     <th>Asignar</th>
                                                 <?php } ?>
                                             </tr>
@@ -51,30 +53,32 @@ require_once('../Models/conexion.php');
                                             <?php
                                             $hoy = date('Y');
 
-                                            $sql = mysqli_query($conection, "SELECT h.id,h.Cedula,c.nombre,c.apellido,h.estudio,h.atendedor,h.placas,h.informa,h.fecha FROM historial h INNER JOIN clientes c on c.cedula = h.cedula
-                         WHERE atendedor like '%Elena%'  AND  fecha like '%" . $hoy . "%'  ORDER BY ID ASC ");
+                                            $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio, SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
+                                            FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+                                            INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+                                            INNER JOIN seguros s ON s.id = dc.seguro_id
+                                            WHERE m.nombre like '%Elena%'  AND c.created_at LIKE '%" . $hoy . "%' AND c.estatus = 1 AND c.informante_id is NULL GROUP BY c.id  ORDER BY  c.id ASC");
 
 
 
                                             $resultado = mysqli_num_rows($sql);
-
+                                            $nro = 0;
                                             if ($resultado > 0) {
                                                 while ($data = mysqli_fetch_array($sql)) {
+                                                    $nro++;
                                             ?>
                                                     <tr class="text-center">
-                                                        <td><?php echo $data['id']; ?></td>
-                                                        <td><?php echo $data['nombre'] . ' ' . $data['apellido']; ?></td>
+                                                        <td><?php echo $nro ?></td>
+                                                        <td><?php echo $data['ruc']; ?></td>
+                                                        <td><?php echo $data['razon_social']; ?></td>
                                                         <td><?php echo $data['estudio']; ?></td>
-                                                        <td><?php echo $data['atendedor'] ?></td>
-                                                        <td><?php echo $data['placas']; ?></td>
-                                                        <td><?php echo $data['informa']; ?></td>
-                                                        <td><?php echo $data['fecha'] ?></td>
+                                                        <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
+                                                        <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
+                                                        <td><?php echo $data['doctor'] ?></td>
+                                                        <td><?php echo $data['comentario'] ?></td>
+                                                        <td><?php echo $data['created_at'] ?></td>
 
-
-
-
-
-                                                        <?php if ($_SESSION['rol'] == 1  || $_SESSION['rol'] == 6) { ?>
+                                                        <?php if ($_SESSION['rol'] == 1  || $_SESSION['rol'] == 5) { ?>
                                                             <td>
                                                                 <a href="../View/asignarInformanteElena.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);">
                                                                     <i class="typcn typcn-edit"></i>

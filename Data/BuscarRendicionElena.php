@@ -3,10 +3,7 @@
 //print_r($_POST);
 session_start();
 require_once("../Models/conexion.php");
-
-$medico = '';
-$fecha_desde = '';
-$fecha_hasta  = '';
+$alert = '';
 if(empty($_POST['fecha_desde']) || empty($_POST['fecha_hasta']) || empty($_POST['medico'])) {
   
   echo '<div class="alert alert-danger" role="alert">
@@ -17,41 +14,24 @@ if(empty($_POST['fecha_desde']) || empty($_POST['fecha_hasta']) || empty($_POST[
   
 }
 
+
 if (!empty($_REQUEST['fecha_desde']) && !empty($_REQUEST['fecha_hasta'])|| !empty($_REQUEST['medico'])) {
-  $fecha_desde = date_create($_REQUEST['fecha_desde']);
-  $desde = date_format($fecha_desde, 'd-m-Y');
 
+  $desde     = $_POST['fecha_desde']. '-00:00:00';
+  $hasta     = $_POST['fecha_hasta']. '-23:00:00';
+  $doctor_id = $_POST['medico'];
 
-  $fecha_hasta = date_create($_REQUEST['fecha_hasta']);
-  $hasta = date_format($fecha_hasta, 'd-m-Y');
+  $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,u.fecha_nac,u.nombre,
+SUM(dc.monto) as monto,dc.descuento, m.nombre as informante, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, 
+c.created_at,c.estatus,c.nro_placas
+FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+INNER JOIN medicos m ON m.id = c.informante_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+INNER JOIN seguros s ON s.id = dc.seguro_id INNER JOIN usuarios u ON u.id = c.paciente_id
+WHERE date(c.created_at) BETWEEN '".$desde."' AND '".$hasta."' AND c.informante_id = '".$doctor_id."'   GROUP BY c.id");
 
-  $medico = trim($_POST['medico']);
-
- $buscar = '';
- $where = '';
-
-}if ($desde > $hasta) {
- echo $alert = '<p class = "alert alert-danger">La Fecha de Inicio de la busqueda debe ser mayor a la del final</p>';
-  exit();
-  
-}else if ($desde == $hasta) {
-
-  $where = "Fecha LIKE '%$desde%' AND Informa LIKE '%$medico%' AND Atendedor like '%Elena%'";
-
-  $buscar = "fecha_desde=$desde&fecha_hasta=$hasta AND Informa LIKE '%$medico%'  AND Atendedor like '%Elena%'";
-}else {
-  $f_de = $desde.'-00:00:00';
-  $f_a  = $hasta.'-23:00:00';
-  $where = "Fecha BETWEEN '$f_de' AND '$f_a' AND Informa LIKE '%$medico%'  AND Atendedor like '%Elena%'";
-  $buscar = "fecha_desde=$desde&fecha_hasta=$hasta AND Informa LIKE '%$medico%'  AND Atendedor like '%Elena%'";
 }
 
-$anio = date_create($_REQUEST['fecha_desde']);
-$fecha = date_format($anio, 'm-Y');
-
-  $sql = mysqli_query($conection, "SELECT h.id,c.nombre,c.apellido,h.Estudio,h.Cedula,h.Atendedor,h.Fecha,h.Seguro,h.Monto,h.Descuento,h.MontoS,h.Comentario, h.Informa 
-  FROM historial h inner join clientes c on c.cedula = h.cedula  where $where and Fecha like '%".$fecha."%' ORDER BY  h.id ASC");
-              
+         
 
 
 
@@ -62,47 +42,39 @@ if ($resultado > 0) {
 
   <thead>
         <tr class="text-center">      
-          <th>Nro</th>
-          <th>Fecha</th>                              
-          <th>Nombre</th>
-          <th>Cedula</th>
-          <th>Estudio</th>
-          <th>Doctor</th>
-          <th>Seguro</th>                                
-          <th>Monto</th>                                
-          <th>Descuento</th>                                
-          <th>Informante</th>                                
+        <th>Nro </th>
+        <th>Ruc </th>
+        <th>Razon Social</th>
+        <th>Estudio</th>
+        <th>Monto</th>
+        <th>Descuento</th>
+        <th>Informante</th>
+        <th>Nro de Placas</th>
+        <th>Comentario</th>
+        <th>Fecha</th>                                
         </tr>
       </thead>
       <tbody>';
-      $total = 0;
+      $nro = 0;
       $monto = 0;
-      $montos = 0;
-      $descuentos = 0;
-      $row_count= 0;
+   
     while ($data = mysqli_fetch_array($sql)){
-      $monto += $data['Monto'];
-      $montos += $data['MontoS'];
-      $descuentos += $data['Descuento'];
-      $row_count++;
-      if(-$data['MontoS']){
-          $total = $monto + $montos;
-     }
-      $total = $monto - $montos;
+      $monto += $data['monto'];
+     $nro++;
    
   
       echo '<tr>
   
-      <td>'.$row_count.'</td>
-      <td>'. $data['Fecha']. '</td>
-      <td>'. $data['nombre'].' '. $data['apellido'].'</td>
-      <td>'. $data['Cedula']. '</td>
-      <td>'. $data['Estudio']. '</td>
-      <td>'. $data['Atendedor']. '</td>
-      <td>'. $data['Seguro']. '</td>
-      <td>'. $data['Monto']. '</td>
-      <td>'. $data['Descuento']. '</td>
-      <td>'. $data['Informa']. '</td>
+      <td>'.$nro.'</td>
+      <td>'. $data['ruc']. '</td>
+      <td>'. $data['razon_social'].'</td>
+      <td>'. $data['estudio']. '</td>
+      <td>'. number_format($data['monto'], 0, '.', '.'). '</td>
+      <td>'. number_format($data['descuento'], 0, '.', '.'). '</td>
+      <td>'. $data['informante']. '</td>
+      <td>'. $data['nro_placas']. '</td>
+      <td>'. $data['comentario']. '</td>
+      <td>'. $data['created_at']. '</td>
   
           </tr>';
     }
@@ -118,7 +90,8 @@ if ($resultado > 0) {
         <td></td>
         <td></td>
         <td></td>
-        <td class="text-center alert alert-success">'.number_format($monto, 3, '.', '.').'.<b>GS</b></td>
+        <td></td>
+        <td class="text-center alert alert-success">'.number_format($monto, 0, '.', '.').'.<b>GS</b></td>
   
       </tr>
     </tfoot>
