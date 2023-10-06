@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  || $_SESSION['rol'] == 5) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -40,7 +40,10 @@ require_once('../Models/conexion.php');
             <?php
 				include "../Models/conexion.php";
 
-				$query_medicos = mysqli_query($conection,"SELECT * FROM medicos WHERE Especialidad like '%Informante%'");
+				$query_medicos = mysqli_query($conection,"SELECT m.id,m.nombre,e.descripcion FROM especialidad_doctores ed
+                INNER JOIN medicos m ON m.id = ed.doctor_id
+                INNER JOIN especialidades e ON e.id = ed.especialidad_id
+                WHERE e.id = 3 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
 
 				mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 				$resultado = mysqli_num_rows($query_medicos);
@@ -53,8 +56,8 @@ require_once('../Models/conexion.php');
               while ($medico = mysqli_fetch_array($query_medicos)) {
 
           ?>
-            <option value="<?php echo $medico["Nombre"]; ?>"><?php echo
-            $medico["Nombre"] ?></option>
+            <option value="<?php echo $medico["id"]; ?>"><?php echo
+            $medico["nombre"] ?></option>
 
         <?php
 

@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 5) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 5) {
     if (empty($_SESSION['active'])) {
         header('location: ../Templates/salir.php');
     }
@@ -33,28 +33,50 @@ require_once('../Models/conexion.php');
                 if (strlen($query) >= $min_length) { // if query length is more or equal minimum length then
                     $query = htmlspecialchars($query);
                     // $query = mysqli_real_escape_string($query);
-                    $raw_results = mysqli_query($conection, "SELECT h.id,h.Cedula,c.Nombre,c.Apellido,c.Celular,c.Nacimiento FROM historial h INNER JOIN clientes c on c.cedula = h.cedula
-                     WHERE h.id = $query") or die(mysqli_error($conection));
+                    $raw_results = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio, SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
+                    FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+                    INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+                    INNER JOIN seguros s ON s.id = dc.seguro_id
+                    WHERE c.paciente_id = '".$query."' AND c.estatus = 1 AND c.informante_id is NULL GROUP BY c.id  ORDER BY  c.id ASC") or die(mysqli_error($conection));
                     #WHERE (`Cedula` LIKE '%".$query."%')") or die(mysql_error());
                     echo "<div class='bs-component'>";
                     echo "<div class='card'>";
                     echo "<h3 class='card-header text-center alert alert-info'>Datos del Paciente <i class='fa fa-user'></i></h3>";
-                    echo "<legend >Datos del Paciente :</legend>";
                     if (mysqli_num_rows($raw_results) > 0) { // if one or more rows are returned do following
-
                         while ($results = mysqli_fetch_array($raw_results)) {
+                            echo '<div class="card-body">';
+                            echo '<div class="row align-items-center h-100">';
+                              echo '<div class="col-md-4">';
+                                echo '<figure class="avatar mx-auto mb-4 mb-md-0">';
+                                  echo '<img src="../assets/images/logo.png" alt="avatar" style="width:150px;
+                                  height:150px;
+                                  border-radius: 100%;
+                                  border: 1px solid white;
+                                  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.3), 0 3px 10px  rgba(0, 0, 0, 0.25)
+                                  ">';
+                                echo '</figure>';
+                              echo '</div>';
+                              echo '<div class="col-md-8">';
+                                echo '<h5 class="text-black text-center text-md-left">CI: ' . $results['ruc'] . '</h5>';
+                                echo '<p class="text-black text-center text-md-left">Nombre: '. $results['razon_social'] .'</p>';
+                                echo '<div class="d-flex align-items-center justify-content-between info pt-2">';
+                                  echo '<div>';
+                                    echo '<p class="text-black font-weight-bold">Doctor/a : ' . $results['doctor'] . '</p>';
+                                    echo '<p class="text-black font-weight-bold">ID : '. $results['id'] .'</p>';
+                                  echo '</div>';
+
+                                  echo '<div>';
+                                    echo '<p class="text-black">
+                                    <a href="../View/asignarInformanteFabiola.php?id='. $results['id'].' " class="btn btn-outline-primary" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25)"><i class="fa fa-user-md"></i> Asingar Informante</a>
+                                    </p>';
+                                   
+                                  echo '</div>';
+                                echo '</div>';
+                              echo '</div>';
+                            echo '</div>';
+                         echo '</div>'; 
+                         echo '<hr>';
                            
-                            echo "<p><h4>CI: " . $results['Cedula'] . "</h4></p>";
-                            echo "<p><h4>Nombre: " . $results['Nombre'] . " " . $results['Apellido'] . "</h4></p>";
-                            echo "<p><h4>Celular: " . $results['Celular'] . "</h4></p>";
-                            $nombre = $results['Nombre'] . " " . $results['Apellido'];
-                            $nacimiento = $results['Nacimiento'];
-                            echo "</div>";
-                            echo'<p>
-                                <td>
-                                     <a href="../View/asignarInformanteElena.php?id='. $results['id'].' " class="btn btn-outline-primary" target="_blank"><i class="fa fa-user-md"></i> Asingar Informante</a></td>
-                                </td></p>';
-                            echo "</div>";
                         }
                     } else { // if there is no matching rows do following
                         echo "No results";
@@ -74,4 +96,13 @@ require_once('../Models/conexion.php');
         <script type="text/javascript" src="../assets/js/jquery-3.3.1.min.js"></script>
         <script src="../assets/js/sweetalert2.min.js"></script>
         <script src="../assets/js/core/popper.min.js"></script>
-    
+        <!-- echo "<p><h4>CI: " . $results['ruc'] . "</h4></p>";
+                            echo "<p><h4>Nombre: " . $results['razon_social'] . "</h4></p>";
+                            echo "<p><h4>Doctor : " . $results['doctor'] . "</h4></p>";
+                            $nombre = $results['razon_social'];
+                            echo "</div>";
+                            echo'<p>
+                                echo '<td>
+                                     <a href="../View/asignarInformanteElena.php?id='. $results['id'].' " class="btn btn-outline-primary" target="_blank"><i class="fa fa-user-md"></i> Asingar Informante</a></td>
+                                </td></p>';
+                            echo "</div>"; -->

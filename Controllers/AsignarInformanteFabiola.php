@@ -1,18 +1,22 @@
 <?php 
 
+
 require_once("../Models/conexion.php");
+$alert = '';
+// print_r($_POST);
+// exit();
 	if (!empty($_POST)) {
-		$alert = '';
 	
-		if (empty( $_POST['Informa'])) {
+	
+		if (empty( $_POST['informante_id'])) {
 	
 			$alert = '<p class = "msg_error">Debe llenar Todos los Campos</p>';
 	
 		}else{
 	
-			$id           = $_POST['id'];
-			$Informa      = $_POST['Informa'];
-			$Placas       = $_POST['Placas'];
+			$id              = $_POST['id'];
+			$informante_id   = $_POST['informante_id'];
+			$nro_placas      = $_POST['nro_placas'];
 		
 			
 	
@@ -21,7 +25,7 @@ require_once("../Models/conexion.php");
 	
 			//WHERE(usuario = '$user' AND idusuario != $id) or (correo = '$email' AND idusuario != $id";
 	//exit; sirve para ejectuar la consulta en mysql
-			$query = mysqli_query($conection,"SELECT * FROM historial
+			$query = mysqli_query($conection,"SELECT * FROM comprobantes
 				WHERE  id != id"
 			);
 	
@@ -35,7 +39,7 @@ require_once("../Models/conexion.php");
 	
 		}else{
 	
-			$sql_update = mysqli_query($conection,"UPDATE historial SET Informa = '$Informa',Placas = '$Placas'
+			$sql_update = mysqli_query($conection,"UPDATE comprobantes SET informante_id = '$informante_id', nro_placas = '$nro_placas'
 				WHERE id = $id");
 	
 			if ($sql_update) {

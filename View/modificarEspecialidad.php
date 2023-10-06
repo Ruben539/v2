@@ -39,3 +39,5 @@ require_once('../Controllers/modificarEspecialidad.php');
             </div>
 
             <?php include('../includes/footer_admin.php'); ?>
+
+          
