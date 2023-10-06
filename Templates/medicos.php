@@ -33,7 +33,7 @@ require_once('../Models/conexion.php');
                                         <th>Correo</th>
                                         <th>Telefono</th>
                                         <th>Fecha de Nacimiento</th>
-                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  || $_SESSION['rol'] == 5 || $_SESSION['rol'] == 6) { ?>
+                                        <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  || $_SESSION['rol'] == 5) { ?>
                                             <th>Editar</th>
                                             <th>Agregar</th>
                                         <?php } ?>
@@ -43,13 +43,15 @@ require_once('../Models/conexion.php');
                                 <tbody>
                                     <?php
                                  if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
-                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,cedula,correo,telefono,fecha_nac,usuario FROM medicos m 
+                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.correo,m.telefono,m.fecha_nac,m.usuario FROM medicos m 
                                             WHERE m.estatus = 1 ORDER BY  m.id DESC");
                                             
-                                  } else if ($_SESSION['rol'] == 5 || $_SESSION['rol'] == 6) {
+                                  } else if ($_SESSION['rol'] == 5) {
                     
-                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,cedula,correo,telefono,fecha_nac FROM medicos m 
-                                    WHERE m.estatus = 1 ORDER BY  m.id DESC");
+                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,e.descripcion FROM especialidad_doctores ed
+                                    INNER JOIN medicos m ON m.id = ed.doctor_id
+                                    INNER JOIN especialidades e ON e.id = ed.especialidad_id
+                                    WHERE e.id = 3 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
                                   }
                                     $resultado = mysqli_num_rows($sql);
 
