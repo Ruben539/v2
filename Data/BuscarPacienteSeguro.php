@@ -16,8 +16,22 @@ if(empty($_POST['fecha_desde']) && empty($_POST['fecha_hasta']) && empty($_POST[
 
 $resultado = mysqli_num_rows($sql);
 
-}else{
+}else if($_POST['fecha_desde'] && $_POST['fecha_hasta'] && empty($_POST['seguro_id'])){
 
+  $desde   = $_POST['fecha_desde']. '-00:00:00';
+  $hasta   = $_POST['fecha_hasta']. '-23:00:00';
+  //$seguro  = $_POST['seguro_id'];
+
+  $sql = mysqli_query($conection,"SELECT s.descripcion as nombre, COUNT(DISTINCT(dc.comprobante_id)) AS cantidad FROM  detalle_comprobantes dc
+  INNER JOIN comprobantes c ON c.id = dc.comprobante_id
+  INNER JOIN seguros s ON s.id = dc.seguro_id
+  WHERE  date(dc.created_at) BETWEEN '".$desde."' AND '".$hasta."' AND
+  s.id IN (SELECT seguro_id FROM detalle_comprobantes)
+  GROUP BY s.descripcion ORDER BY cantidad");
+
+$resultado = mysqli_num_rows($sql);
+}else{
+  
   $desde   = $_POST['fecha_desde']. '-00:00:00';
   $hasta   = $_POST['fecha_hasta']. '-23:00:00';
   $seguro  = $_POST['seguro_id'];
