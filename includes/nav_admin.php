@@ -226,6 +226,7 @@
             <div class="collapse" id="seguros">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="../Templates/seguros.php"> Lista de Seguros </a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/pacientesSeguros.php"> Pacientes por Seguros </a></li>
               </ul>
             </div>
           </li>
