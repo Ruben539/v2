@@ -4,7 +4,7 @@ require_once("../Models/conexion.php");
 $alert = '';
 
 if (!empty($_POST)) {
-  if (empty($_POST['nombre']) || empty($_POST['cedula']) || empty($_POST['telefono']) || empty($_POST['sexo'])) {
+  if (empty($_POST['nombre']) || empty($_POST['cedula'])  || empty($_POST['sexo'])) {
 
     $alert = '<p class = "msg_error">Debe llenar Todos los Campos</p>';
   } else {
@@ -18,7 +18,7 @@ if (!empty($_POST)) {
 
     $resultado = 0;
 
-    $query = mysqli_query($conection, "SELECT * FROM usuarios WHERE cedula = '$cedula' or telefono = '$telefono'");
+    $query = mysqli_query($conection, "SELECT * FROM usuarios WHERE cedula = '$cedula' ");
 
 
 
