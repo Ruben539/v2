@@ -8,7 +8,7 @@ if (!empty($_POST)) {
 
     $alert = '<p class = "msg_error">Debe llenar Todos los Campos</p>';
   } else {
-    $Cedula        = $_POST['cedula'];
+    $cedula        = $_POST['cedula'];
     $nombre        = $_POST['nombre'];
     $correo        = $_POST['correo'];
     $telefono      = $_POST['telefono'];
