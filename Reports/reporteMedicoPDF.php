@@ -30,7 +30,8 @@ $buscar = "fecha_desde=$desde&fecha_hasta=$hasta ";
 
 /* INICIO DE LA COSULTA PA OBTENER LA LISTA DE BUSQUEDA */
 
-$sql_reporte = mysqli_query($conection, "SELECT c.ruc, c.razon_social, dc.descripcion as estudio, dc.monto,dc.monto_seguro,dc.descuento,dc.nro_radiografias,fp.descripcion as forma_pago,s.descripcion as seguro,
+$sql_reporte = mysqli_query($conection, "SELECT c.ruc, c.razon_social, dc.descripcion as estudio, dc.monto,dc.monto_seguro,
+dc.descuento,dc.nro_radiografias,fp.descripcion as forma_pago,s.descripcion as seguro,dc.pago_diferido,
 IF(c.estatus = 1, dc.monto, 0) as monto,
 IF(c.estatus = 1, dc.descuento, 0) as descuento
 FROM detalle_comprobantes dc INNER JOIN comprobantes c ON c.id =  dc.comprobante_id
@@ -42,16 +43,17 @@ WHERE c.created_at BETWEEN '" . $f_de . "' AND '" . $f_a . "' AND  c.doctor_id =
 
 
 /* FIN DE LA COSULTA PA OBTENER LA LISTA DE PAZ EN BIOS */
-$query_bio = mysqli_query($conection, "SELECT COUNT(DISTINCT(c.id)) AS cantidad
+$query_bio = mysqli_query($conection, "SELECT COUNT(dc.comprobante_id) AS cantidad
 FROM detalle_comprobantes dc INNER JOIN comprobantes c ON c.id =  dc.comprobante_id
 INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
 INNER JOIN seguros s ON s.id = dc.seguro_id 
-WHERE c.created_at BETWEEN '" . $f_de . "' AND '" . $f_a . "' AND  c.doctor_id = $valor AND dc.forma_pago_id = 1 AND  c.estatus = 1;");
+WHERE c.created_at BETWEEN '" . $f_de . "' AND '" . $f_a . "' AND  c.doctor_id = $valor AND dc.forma_pago_id <> 4  AND  c.estatus = 1;");
 
 while ($data = mysqli_fetch_array($query_bio)) {
 
   $cantidadBio  = $data['cantidad'];
   $totalBio = $cantidadBio * 10000;
+
 }
 
 /* FIN DE LA COSULTA PA OBTENER LA LISTA DE PAZ EN BIOS */
@@ -82,6 +84,7 @@ $descuento        = 0;
 $monto            = 0;
 $porcentajeDiax   = 0;
 $porcentajeDoctor = 0;
+$diferencia       = 0;
 ob_start();
 ?>
 <!DOCTYPE html>
@@ -132,26 +135,32 @@ ob_start();
                 while ($data =  mysqli_fetch_array($sql_reporte)) {
                   $descuento       += $data['descuento'];
                   $monto           += $data['monto'];
+
                   $totalIngresado   = $monto - $descuento;
-                  $porcentajeDiax   = $totalIngresado * 0.3;
-                  $porcentajeDoctor = $totalIngresado * 0.7;
+                  $diferencia       = $totalIngresado - $totalBio;
+                  $porcentajeDiax   = $diferencia * 0.3;
+                  $porcentajeDoctor = $diferencia * 0.7;
+
+                  
                 ?>
                   <tr>
                     <td><?php echo number_format($data['ruc'], 0, '.', '.'); ?></td>
                     <td><?php echo $data['razon_social']; ?></td>
                     <td><?php echo $data['estudio']; ?></td>
-                    <?php if ($data['monto'] == 0) { ?>
+                    <?php if ($data['monto'] == 0 || $data['pago_diferido'] == 0) { ?>
                       <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
                     <?php } else { ?>
-                      <td><?php echo number_format($data['monto'] - 10000, 0, '.', '.'); ?></td>
+                      <td><?php echo number_format($data['monto'] -10000, 0, '.', '.'); ?></td>
                     <?php } ?>
                     <td><?php echo number_format($data['monto_seguro'], 0, '.', '.'); ?></td>
                     <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
                     <?php if($data['descuento'] >= $data['monto']){?>
                     <td><?php echo 0; ?></td>
-                    <?php } else { ?>
-                      <td><?php echo number_format($data['monto'] - $data['descuento'] - 10000, 0, '.', '.'); ?></td>
-                      <?php } ?>
+                    <?php } else if($data['pago_diferido'] == 0){ ?>
+                      <td><?php echo number_format($data['monto'] - $data['descuento'] -10000, 0, '.', '.'); ?></td>
+                      <?php }else{  ?>
+                        <td><?php echo number_format($data['monto'] - $data['descuento'], 0, '.', '.'); ?></td>
+                      <?php }  ?>
                     <td><?php echo $data['forma_pago']; ?></td>
                     <td><?php echo $data['seguro']; ?></td>
                   </tr>
@@ -164,7 +173,15 @@ ob_start();
             <section>
               <?php if ($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 3 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14) { ?>
                 <p>Ingreso Total :</p>
-                <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($totalIngresado - $totalBio, 0, '.', '.'); ?>.<b>GS</b></p>
+                <p style="text-align: right;" class="alert alert-danger"> 
+                <?php 
+                if($data['pago_diferido'] == 0){
+                  echo number_format(($totalIngresado - $totalBio) + 10000, 0, '.', '.');
+                }else{
+
+                  echo number_format($totalIngresado - $totalBio, 0, '.', '.'); 
+                }
+                ?>.<b>GS</b></p>
               <?php } else { ?>
                 <table class="table table-striped text-center">
                   <thead>
@@ -174,9 +191,10 @@ ob_start();
                   </thead>
                   <tbody>
                     <tr>
+                     
                       <td><?php echo number_format($porcentajeDiax, 0, '.', '.'); ?></td>
                       <td><?php echo number_format($porcentajeDoctor, 0, '.', '.'); ?></td>
-                      <td><?php echo number_format(($totalIngresado), 0, '.', '.'); ?></td>
+                      <td><?php echo number_format($diferencia, 0, '.', '.'); ?></td>
                     </tr>
                   </tbody>
                 </table>
