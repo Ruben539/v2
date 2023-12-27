@@ -20,7 +20,7 @@ require_once('../Models/conexion.php');
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4>Gastos de la Clinica <a href="../View/agregarGastos.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> Registrar</a></h4>
+                        <h4>Depositos realizados <a href="../View/agregarDeposito.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> Registrar</a></h4>
 
                         <form class="row" method="POST" id='formFechas' name='formFechas'>
                     <div class="col-md-5">
@@ -37,7 +37,7 @@ require_once('../Models/conexion.php');
 
                     <div class="col-md-2">
 
-                        <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-search"></i>Filtrar
+                        <button class="btn btn-primary" type="submit" ><i class="fa fa-fw fa-lg fa-search"></i>Filtrar
 
                     </div>
             </div>
@@ -70,7 +70,7 @@ require_once('../Models/conexion.php');
         <script src="../assets/js/core/popper.min.js"></script>
         <script type="text/javascript" src="../assets/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="../assets/js/dataTables.bootstrap.min.js"></script>
-        <script src="../assets/js/Gastos/gastos.js"></script>
+        <script src="../assets/js/Depositos/depositos.js"></script>
             <script type="text/javascript">
                 $(document).ready(function() {
 
@@ -89,7 +89,7 @@ require_once('../Models/conexion.php');
 
                 $.ajax({
                     type: "POST",
-                    url: '../Data/BuscarGastos.php',
+                    url: '../Data/BuscarDepositos.php',
                     data: form.serialize(),
                     success: function(data) {
                         $('#tablaResultado').html('');

@@ -40,24 +40,23 @@ require_once('../Models/conexion.php');
                                                 <th>Estudio</th>
                                                 <th>Monto</th>
                                                 <th>Descuento</th>
-                                                <th>Doctor</th>
-                                                <th>Comentario</th>
+                                                <th>Medico</th>
                                                 <th>Fecha</th>
                                                 <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 5) { ?>
                                                     <th>Asignar</th>
+                                                    <th>Confirmar</th>
                                                 <?php } ?>
                                             </tr>
                                         </thead>
 
                                         <tbody>
                                             <?php
-                                            $hoy = date('Y');
 
-                                            $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio, SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
-                                            FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
-                                            INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+                                            $sql = mysqli_query($conection, "SELECT DISTINCT(c.id), c.ruc, c.razon_social, dc.descripcion AS estudio, dc.monto,dc.descuento, m.nombre AS doctor,c.created_at,s.descripcion AS seguros
+                                            FROM (comprobantes c INNER JOIN medicos m ON m.id = c.doctor_id)
+                                            INNER JOIN detalle_comprobantes dc ON dc.comprobante_id = c.id
                                             INNER JOIN seguros s ON s.id = dc.seguro_id
-                                            WHERE m.nombre like '%Fabiola%'  AND c.created_at LIKE '%" . $hoy . "%' AND c.estatus = 1 AND c.informante_id is NULL GROUP BY c.id  ORDER BY  c.id ASC");
+                                            WHERE m.id = 4 AND c.estatus = 1 AND c.estado LIKE '%En Espera%'");
 
 
 
@@ -75,7 +74,6 @@ require_once('../Models/conexion.php');
                                                         <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
                                                         <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
                                                         <td><?php echo $data['doctor'] ?></td>
-                                                        <td><?php echo $data['comentario'] ?></td>
                                                         <td><?php echo $data['created_at'] ?></td>
 
                                                         <?php if ($_SESSION['rol'] == 1  || $_SESSION['rol'] == 5) { ?>
@@ -83,6 +81,11 @@ require_once('../Models/conexion.php');
                                                                 <a href="../View/asignarInformanteFabiola.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);">
                                                                     <i class="typcn typcn-edit"></i>
                                                                 </a>
+                                                            </td>
+
+                                                            <td>
+                                                                <button onclick="confirmarPaciente('<?php echo $data['id']; ?>')" class="btn btn-outline-success" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);">
+                                                                    <i class="typcn typcn-input-checked-outline" aria-hidden="true"></i></button>
                                                             </td>
                                                         <?php } ?>
                                                     </tr>
@@ -109,6 +112,16 @@ require_once('../Models/conexion.php');
         <script src="../assets/js/core/popper.min.js"></script>
         <script type="text/javascript" src="../assets/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="../assets/js/dataTables.bootstrap.min.js"></script>
+        <script src="../assets/js/Paciente/confirmarPaciente.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+
+                $('#btnEditarPass').click(function() {
+                    /* Act on the event */
+                    confirmarPaciente();
+                });
+            });
+        </script>
         <script type="text/javascript">
             $(document).ready(function() {
                 tablaHerreria = $("#tabla_Usuario").DataTable({

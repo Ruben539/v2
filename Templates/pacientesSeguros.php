@@ -22,7 +22,7 @@ require_once('../Models/conexion.php');
                     <div class="card-body">
                         <h4>Cantidad de Pacientes por Seguro<i class="typcn typcn-calculator"></i> </h4>
 
-                        <form class="row" method="POST" id='formSeguros' name='formEstudios'>
+                        <form class="row" method="POST" id='formSeguros' name='formSeguros'>
                             <div class="col-md-6">
                                 <div class="widget-small">
                                     <input type="date" name="fecha_desde" id="fecha_desde" class="form-control">
@@ -38,7 +38,7 @@ require_once('../Models/conexion.php');
                             <div class="col-md-12">
                                 <label for=""></label>
 
-                                <select name="seguro_id" id="seguro_id" class="form-control" aria-placeholder="Seleccione un Seguro">
+                                <select name="seguro_id" id="seguro_id" class="chosen form-control" aria-placeholder="Seleccione un Seguro">
                                     <option value="">Seleccione un Seguro</option>
                                     <?php
                                     $raw_results4 = mysqli_query($conection, "select * from seguros;") or die(mysqli_error($conection));
@@ -54,7 +54,19 @@ require_once('../Models/conexion.php');
                                     ?>
                                 </select>
 
+                           
+                            </div>
+                         
+                           
+                            <div class="col-md-12">
+                                    <label for=""></label>
+                                 <select name="cobertura" id="cobertura" class="form-control" aria-placeholder="Seleccione una Cobertura">
+                                    <option value="">Seleccione una Cobertura</option>
+                                    <option value="1">Preferencial</option>
+                                    <option value="2">Completa</option>
+                                </select>
                                 <label for=""></label>
+                            
                             </div>
 
 
@@ -71,13 +83,10 @@ require_once('../Models/conexion.php');
                         <div class="col-md-12">
                             <div class="tile">
                                 <div class="table-responsive">
-                                    <table id="tablaResultado" class="table table-striped table-bordered table-condensed" style="width:100%">
+                                    <table id="tabla" class="table table-striped table-bordered table-condensed text-center" style="width:100%">
 
                                     </table>
-                                    <div id="idTabla">
-
-                                        <canvas id="pacienteGrafico" width="200" height="200" style="display: none;"></canvas>
-                                    </div>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -120,8 +129,8 @@ require_once('../Models/conexion.php');
                     url: '../Data/BuscarPacienteSeguro.php',
                     data: form.serialize(),
                     success: function(data) {
-                        $('#tablaResultado').html('');
-                        $('#tablaResultado').append(data);
+                        $('#tabla').html('');
+                        $('#tabla').append(data);
                         console.log(data);
                     }
 

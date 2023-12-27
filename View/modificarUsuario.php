@@ -42,7 +42,7 @@ require_once("../Controllers/modificarUsuario.php");
                   <?php
                   include "../Models/conexion.php";
 
-                  $query_roles = mysqli_query($conection, "SELECT * FROM roles where id  > 1 AND estatus = 1");
+                  $query_roles = mysqli_query($conection, "SELECT * FROM roles where id  != 1 AND estatus = 1");
 
                   mysqli_close($conection); //con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
                   $resultado = mysqli_num_rows($query_roles);
@@ -57,7 +57,7 @@ require_once("../Controllers/modificarUsuario.php");
 
                       ?>
                     <option value="<?php echo $rol["id"]; ?>"><?php echo
-                                                              $rol["descripcion"] ?></option>
+                                           $rol["descripcion"] ?></option>
 
                 <?php
 

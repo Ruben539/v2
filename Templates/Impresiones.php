@@ -1,17 +1,21 @@
 <?php
+
 require_once("../Models/conexion.php");
 require_once("../includes/header_admin.php");
 
-$hoy =  date('Y-m-d');
 
-$sql = mysqli_query($conection, "SELECT c.id FROM comprobantes c WHERE  c.created_at like '%$hoy%'  ORDER BY id DESC LIMIT 1 ");
+date_default_timezone_set('America/Asuncion');
+$id =  $_REQUEST['id'];
+ $hoy =  date('Y-m-d');
+
+$sql = mysqli_query($conection, "SELECT c.id FROM comprobantes c WHERE  c.id = '".$id."' ");
 
 
 $resultado = mysqli_num_rows($sql);
 
 if ($resultado == 0) {
 
-  header("location: ../Templates/dashboard.php");
+ // header("location: ./dashboard.php");
 } else {
   $option = '';
   while ($data = mysqli_fetch_array($sql)) {
@@ -20,7 +24,7 @@ if ($resultado == 0) {
   }
 }
 
-echo $id;
+//echo $id;
 
 ?>
 
@@ -48,7 +52,7 @@ echo $id;
                                             <br>
                                             <i class="typcn typcn-credit-card icon-xl text-secondary"></i>
                                         </div>
-                                        <a href="../Reports/Factura.php" class="btn btn-success" target="_blank">Recibo</a>
+                                        <a href="../Reports/Factura.php" class="btn btn-outline-success" target="_blank">Recibo</a>
                                     </div>
                                 </div>
                             </div>
@@ -63,7 +67,7 @@ echo $id;
                                             </div>
                                             <i class="typcn typcn-credit-card icon-xl text-secondary"></i>
                                         </div>
-                                        <a href="../Reports/Recibo.php" class="btn btn-danger" target="_blank">Factura</a>
+                                        <a href="../Reports/Recibo.php" class="btn btn-outline-danger" target="_blank">Factura</a>
                                     </div>
                                 </div>
                             </div>
@@ -80,7 +84,28 @@ echo $id;
                                         </div>
                                         <form action="../Reports/Reporte.php" target="_blank">
                                             <input type="hidden" name="id" id="id" value="<?php echo $id;?>">
-                                            <button type="submit" class="btn btn-info">Reporte</button>
+                                            <button type="submit" class="btn btn-outline-info">Reporte</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                         
+                            
+
+                            <div class="col-md-4 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center justify-content-between justify-content-md-center justify-content-xl-between flex-wrap mb-4">
+                                            <div>
+                                                <p class="mb-2 text-md-center text-lg-left">Ticket</p>
+                                                <hr>
+                                                <h3 class="mb-0">Imprimir Ticket</h3>
+                                            </div>
+                                            <i class="typcn typcn-document-text icon-xl text-secondary"></i>
+                                        </div>
+                                        <form action="../Tickets/ticket.php" target="_blank">
+                                            <input type="hidden" name="id" id="id" value="<?php echo $id;?>">
+                                            <button type="submit" class="btn btn-outline-warning">Ticket</button>
                                         </form>
                                     </div>
                                 </div>

@@ -1,10 +1,25 @@
+<?php 
+
+require_once('../Models/conexion.php');
+
+date_default_timezone_set('America/Asuncion');
+$hoy = date('Y-m-d');
+$query_comprobantes = mysqli_query($conection, "SELECT  DISTINCT(c.id),c.ruc, c.razon_social,dc.descripcion as estudio,
+ dc.monto,dc.descuento, m.nombre as doctor,dc.cobertura,s.descripcion as seguro,c.comentario, c.created_at,dc.nro_radiografias
+ FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+ INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN seguros s ON s.id = dc.seguro_id
+ WHERE  c.estatus = 3 AND c.created_at LIKE '%" . $hoy . "%' GROUP BY c.id  ORDER BY  c.id ASC");
+
+$resultado = mysqli_num_rows($query_comprobantes);
+
+?>
 
 <nav class="navbar-breadcrumb col-xl-12 col-12 d-flex flex-row p-0">
    
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <ul class="navbar-nav mr-lg-2">
           <li class="nav-item ml-0">
-            <h4 class="mb-0">Dashboard</h4>
+            <h4 class="mb-0">Panel de Control</h4>
           </li>
           <li class="nav-item">
             <div class="d-flex align-items-baseline">
@@ -51,9 +66,71 @@
           <li class="nav-item">
             <a class="nav-link" href="../Templates/dashboard.php">
               <i class="typcn typcn-device-desktop menu-icon"></i>
-              <span class="menu-title">Dashboard</span>
+              <span class="menu-title">Panel de Control</span>
             </a>
           </li>
+
+ 
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 ){?>
+            <li class="nav-item">
+            <a class="nav-link" href="../Templates/orden.php">
+              <i class="typcn typcn-device-desktop menu-icon"></i>
+              <span class="menu-title">Registro Paciente</span>
+            </a>
+          </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ){?>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#comprobantes" aria-expanded="false" aria-controls="comprobantes">
+              <i class=" typcn typcn-clipboard menu-icon"></i>
+              <span class="menu-title">Facturacion</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="comprobantes">
+              <ul class="nav flex-column sub-menu">
+                <?php if($resultado > 0){?>
+                <li class="nav-item"> <a class="nav-link text-danger" href="../Templates/pendientesACobrar.php"> Pendientes a Cobrar </a></li>
+                <?php }else  if($resultado == 0){?>
+                  <li class="nav-item"> <a class="nav-link" href="../Templates/pendientesACobrar.php"> Pendientes a Cobrar </a></li>
+                <?php }?>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/ordenCanceladas.php"> Comprobante Cancelados</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/reporteDiario.php"> Reporte Diarios</a></li>
+              </ul>
+            </div>
+          </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3){?>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#agendamiento" aria-expanded="false" aria-controls="agendamiento">
+              <i class="typcn typcn-device-tablet menu-icon"></i>
+              <span class="menu-title">Agendamiento</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="agendamiento">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../Templates/agendamientos.php">Lista de Agendamiento</a></li>
+              </ul>
+            </div>
+          </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ){?>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#cierre" aria-expanded="false" aria-controls="cierre">
+              <i class="typcn typcn-calculator menu-icon"></i>
+              <span class="menu-title">Informes Varios</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="cierre">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../Templates/cierreCaja.php">Rendiciones</a></li>
+              </ul>
+            </div>
+          </li>
+          <?php }?>
+
           <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
@@ -65,6 +142,21 @@
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="../Templates/usuarios.php">Usuarios Activos</a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/usuariosInactivos.php">Usuarios Inactivos</a></li>
+              </ul>
+            </div>
+          </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2){?>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#ui-referencista" aria-expanded="false" aria-controls="ui-referencista">
+              <i class="typcn typcn-group menu-icon"></i>
+              <span class="menu-title">Referencistas</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-referencista">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="../Templates/referentes.php">Referencistas</a></li>
               </ul>
             </div>
           </li>
@@ -109,7 +201,8 @@
             </a>
             <div class="collapse" id="fabiola">
               <ul class="nav flex-column sub-menu">
-              <li class="nav-item"> <a class="nav-link" href="../Templates/listadoPacientesFabiola.php">Lista Paciente</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/listadoPacientesFabiola.php">Paciente Pendiente</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/listadoPacientesFabiolaAsignado.php">Paciente Asignado</a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/buscarPacienteFabiola.php">Buscar Paciente </a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/rendicionFabiola.php">Rendiciones </a></li>
               </ul>
@@ -125,7 +218,8 @@
             </a>
             <div class="collapse" id="elena">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../Templates/listadoPacientesElena.php">Lista Paciente</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/listadoPacientesElena.php">Paciente Pendientes</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/listadoPacientesElenaAsignado.php">Paciente Asignados</a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/buscarPacienteElena.php">Buscar Paciente </a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/rendicionElena.php">Rendiciones </a></li>
               </ul>
@@ -133,22 +227,6 @@
           </li>
           <?php }?>
 
-          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 ){?>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#comprobantes" aria-expanded="false" aria-controls="comprobantes">
-              <i class=" typcn typcn-clipboard menu-icon"></i>
-              <span class="menu-title">Comprobantes</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="comprobantes">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../Templates/orden.php"> Registro de Paciente </a></li>
-                <li class="nav-item"> <a class="nav-link" href="../Templates/ordenCanceladas.php"> Comprobante Cancelados</a></li>
-                <li class="nav-item"> <a class="nav-link" href="../Templates/reporteDiario.php"> Reporte Diarios</a></li>
-              </ul>
-            </div>
-          </li>
-          <?php }?>
 
           <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 || $_SESSION['rol'] == 5){?>
           <li class="nav-item">
@@ -236,13 +314,12 @@
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#error" aria-expanded="false" aria-controls="error">
               <i class="typcn typcn-clipboard menu-icon"></i>
-              <span class="menu-title">Gasto Diax</span>
+              <span class="menu-title">Depositos</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="error">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../Templates/gastos.php"> Lista de Gastos </a></li>
-                <li class="nav-item"> <a class="nav-link" href="../Templates/gastosCancelados.php"> Gastos Cancelados </a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/depositos.php"> Lista de Depositos </a></li>
               </ul>
             </div>
           </li>
@@ -252,12 +329,12 @@
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#financiero" aria-expanded="false" aria-controls="financiero">
               <i class="typcn typcn-clipboard menu-icon"></i>
-              <span class="menu-title">Mov. Financiero</span>
+              <span class="menu-title">Gastos</span>
               <i class="menu-arrow"></i>
             </a>
             <div class="collapse" id="financiero">
               <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../Templates/movimientosFinacieros.php"> Lista de Movimientos </a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/movimientosFinacieros.php"> Lista de Gastos </a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/dashboardFinaciero.php"> Rendición Mensual </a></li>
               </ul>
             </div>

@@ -51,8 +51,8 @@ require_once('../Controllers/modificarMovimiento.php');
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="control-label" for="fecha">Fecha de Movimiento</label>
-                                    <input type="date" name="fecha" id="fecha" class="form-control" value="<?php echo $fecha;?>">
+                                    <label class="control-label" for="proveedor">Proveedor</label>
+                                    <input type="text" name="proveedor" id="proveedor" class="form-control" value="<?php echo $proveedor;?>">
 
                                 </div>
 

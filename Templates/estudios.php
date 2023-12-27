@@ -30,8 +30,9 @@ require_once('../Models/conexion.php');
                                         <th>ID</th>
                                         <th>Estudio</th>
                                         <th>Seguro</th>
-                                        <th>Preferencial</th>
+                                        <th>Normal</th>
                                         <th>Hospitalario</th>
+                                        <th>Categoria</th>
                                         <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 || $_SESSION['rol'] == 5 ) { ?>
                                             <th>Editar</th>
                                             <th>Eliminar</th>
@@ -41,8 +42,8 @@ require_once('../Models/conexion.php');
 
                                 <tbody>
                                     <?php
-                                    $sql = mysqli_query($conection, "SELECT e.id,e.nombre,e.seguro,e.preferencial,e.hospitalario
-                                     FROM estudios e where e.estatus = 1 ORDER BY e.id DESC");
+                                    $sql = mysqli_query($conection, "SELECT e.id,e.nombre,e.seguro,e.preferencial,e.hospitalario,ce.descripcion
+                                     FROM estudios e INNER JOIN categoria_estudio ce ON ce.id = e.categoria_id WHERE e.estatus = 1 ORDER BY e.id DESC");
 
                                     $resultado = mysqli_num_rows($sql);
 
@@ -53,6 +54,7 @@ require_once('../Models/conexion.php');
                                             $ver[2];
                                             $ver[3];
                                             $ver[4];
+                                            $ver[5];
 
                                     ?>
                                             <tr class="text-center">
@@ -62,6 +64,7 @@ require_once('../Models/conexion.php');
                                                 <td><?= $ver[2]; ?></td>
                                                 <td><?= $ver[3]; ?></td>
                                                 <td><?= $ver[4]; ?></td>
+                                                <td><?= $ver[5]; ?></td>
                                                 <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
                                                     <td>
                                                         <a href="../View/modificarEstudios.php?id=<?php echo $ver[0]; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-edit"></i></a>

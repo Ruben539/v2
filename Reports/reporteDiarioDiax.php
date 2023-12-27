@@ -12,6 +12,8 @@ if (empty($_POST['fecha_desde']) || empty($_POST['fecha_hasta'])) {
 }
 
 if (!empty($_REQUEST['fecha_desde']) && !empty($_REQUEST['fecha_hasta'])) {
+  date_default_timezone_set('America/Asuncion');
+
   $fecha_desde = date_create($_REQUEST['fecha_desde']);
   $desde = date_format($fecha_desde, 'Y-m-d');
 
@@ -28,17 +30,75 @@ if (!empty($_REQUEST['fecha_desde']) && !empty($_REQUEST['fecha_hasta'])) {
 $f_de = $desde . '-00:00:00';
 $f_a  = $hasta . '-23:00:00';
 $where = "c.created_at BETWEEN '$f_de' AND '$f_a' AND m.nombre LIKE '%" . $valor . "%' ";
+$wherePaz = "c.created_at BETWEEN '$f_de' AND '$f_a' AND m.nombre LIKE '%PAZ%' ";
 $buscar = "fecha_desde=$desde&fecha_hasta=$hasta ";
 
 //echo $where;
 //exit;
-$sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,u.fecha_nac,u.nombre,
-SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, 
-c.created_at,c.estatus
+$sql_efectivo = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
+fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
+IF(c.estatus = 1, dc.monto, 0) as monto,
+IF(c.estatus = 1, dc.descuento, 0) as descuento
 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
 INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
-INNER JOIN seguros s ON s.id = dc.seguro_id INNER JOIN usuarios u ON u.id = c.paciente_id
-WHERE $where GROUP BY c.id");
+INNER JOIN seguros s ON s.id = dc.seguro_id
+WHERE $where  AND dc.forma_pago_id = 1 GROUP BY c.id");
+
+$resultado_efectivo = mysqli_num_rows($sql_efectivo);
+
+
+
+$sql_post = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
+fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
+IF(c.estatus = 1, dc.monto, 0) as monto,
+IF(c.estatus = 1, dc.descuento, 0) as descuento
+FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+INNER JOIN seguros s ON s.id = dc.seguro_id
+WHERE $where  AND dc.forma_pago_id = 2 GROUP BY c.id");
+
+$resultado_post = mysqli_num_rows($sql_post);
+
+$sql_transferencia = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
+fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
+IF(c.estatus = 1, dc.monto, 0) as monto,
+IF(c.estatus = 1, dc.descuento, 0) as descuento
+FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+INNER JOIN seguros s ON s.id = dc.seguro_id
+WHERE $where  AND dc.forma_pago_id = 3 GROUP BY c.id");
+
+$resultado_transferencia = mysqli_num_rows($sql_transferencia);
+
+
+$sql_seguros = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
+fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
+IF(c.estatus = 1, dc.monto, 0) as monto,
+IF(c.estatus = 1, dc.descuento, 0) as descuento
+FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+INNER JOIN seguros s ON s.id = dc.seguro_id
+WHERE $where  AND dc.forma_pago_id = 4 GROUP BY c.id");
+
+$resultado_seguros = mysqli_num_rows($sql_seguros);
+
+$sql_doctores = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio, dc.monto,dc.descuento, m.nombre as doctor, 
+m.id as docID,fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus
+FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+INNER JOIN seguros s ON s.id = dc.seguro_id
+WHERE $where   GROUP BY c.id");
+
+$resultado_doctores = mysqli_num_rows($sql_doctores);
+
+$fecha= '';
+$medico = '';
+
+while($data = mysqli_fetch_array($sql_doctores)){
+  $fecha     = $data['created_at'];
+  $medico    = $data['doctor'];
+  $doctor_id = $data['docID'];
+}
 
 
 ob_start();
@@ -57,144 +117,536 @@ ob_start();
 
 <body>
 
-  <main class="app-content">
+<main class="app-content">
+
+
+     <!---------------------Tabla de gatos apara el reporte de EFECTIVO----------------------------------->
+     <?php if($resultado_efectivo > 0){?>  
     <div class="row">
       <div class="col-md-12">
         <div class="tile">
-          <h5 class="text-center">Datos Pacientes</h5>
+          <h5 class="text-center">Datos de la Rendición</h5>
           <div class="table-responsive">
-            <table id="tabla_Usuario" class="table table-bordered table-condensed" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25); font-size: 10px;">
+            <div>
+      
+              <p>Fecha  : <?php echo $desde; ?></p>
+              <hr>
+              <p>Forma de pago : EFECTIVO</p>
+
+            </div>
+            <table id="tabla_Usuario" class="table table-bordered table-condensed" style="font-size: 11px; margin-left: -35px;">
               <thead>
-                <tr class="text-center">
-                  <th class="ml-5">Nro</th>
+                <tr class="text-center" style="font-size: 11px;font-weight: bold;">
+                  <th>Nro Ticket </th>
                   <th>Ruc </th>
-                  <th>Razon Social</th>
+                  <th>Nombre</th>
                   <th>Estudio</th>
                   <th>Monto</th>
-                  <th>Descuento</th>
-                  <th>Doctor</th>
+                  <th>Monto Seguro</th>
+                  <th>Desc.</th>
+                  <th>Monto Cobrado</th>
                   <th>Forma de Pago</th>
                   <th>Seguro</th>
-                  <th>Comentario</th>
-                  <th>Fecha</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
-                $resultado = mysqli_num_rows($sql);
-                $total = 0;
-                $descuento = 0;
+                 date_default_timezone_set('America/Asuncion');
+                
+                 $query_diax = mysqli_query($conection,"SELECT count(DISTINCT(c.id)) AS cantidad  FROM comprobantes c INNER JOIN medicos m ON m.id = c.doctor_id 
+                 INNER JOIN detalle_comprobantes dc ON dc.comprobante_id = c.id
+                 WHERE $wherePaz AND dc.forma_pago_id = 1  AND c.estatus = 1");
+       
+                 $resultado_diax = mysqli_num_rows($query_diax);
+                 $cantidadPaz  = 0;
+                 $porcentaje = 0;
+               
+                 while($data = mysqli_fetch_array($query_diax)){
+       
+                     $cantidadPaz  = $data['cantidad'];
+                    
+       
+                 }
+
                 $nro = 0;
-                if ($resultado > 0) {
-                  while ($data = mysqli_fetch_array($sql)) {
-                    $total += (int)$data['monto'];
+                $monto = 0;
+                $descuento = 0;
+                $totalEfectivo = 0;
+                $precio = 0;
+                $totalDiaxEfectivo = 0;
+                $totalMedicoEfectivo = 0;
+                $montoFinalEfectivo = 0;
+                $estatus = 0;
+
+
+                if ($resultado_efectivo > 0) {
+                  while ($data = mysqli_fetch_array($sql_efectivo)) {
+                    $estatus = $data['estatus'];
+                    if($estatus == 1){
+                      $precio = $data['monto'];
+                     
+                    }else{
+                      $precio = 0;
+                    }
+                    
                     $descuento += (int)$data['descuento'];
                     $nro++;
+
+                    if ($data['estudio'] == 'Radiografias') {
+                      $monto = $precio * $data['nro_radiografias'];
+                    } else if ($data['estudio'] != 'Radiografias' ) {
+                      $monto =  $precio;
+                    }
+
+                    $totalEfectivo += ($monto - $data['descuento']);
+                    $montoFinalEfectivo =  $totalEfectivo;
+                    $totalDiaxEfectivo = $montoFinalEfectivo * 0.3;
+                    $totalMedicoEfectivo = $montoFinalEfectivo * 0.7;
                 ?>
-                <?php if($data['estatus'] == 0){?>
-                    <tr class="text-center bg-danger">
-                <?php }else{ ?>
-                  <tr class="text-center">
-                  <?php } ?>
-                      <td><?php echo $nro ?></td>
+                <?php if($estatus == 1){?>
+
+                    <tr class="text-center" style="font-size: 10px; font-weight: 500;">
+                <?php }else{?>
+                  <tr class="text-center alert alert-danger" style="font-size: 10px; font-weight: 500;">
+                <?php }?>
+                
+                      <td><?php echo $data['id']; ?></td>
                       <td><?php echo $data['ruc']; ?></td>
                       <td><?php echo $data['razon_social']; ?></td>
                       <td><?php echo $data['estudio']; ?></td>
-                      <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
+                      <td><?php echo number_format($monto, 0, '.', '.'); ?></td>
+                      <td><?php echo number_format($data['monto_seguro'], 0, '.', '.'); ?></td>
                       <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
-                      <td><?php echo $data['doctor'] ?></td>
-                      <td><?php echo $data['forma_pago'] ?></td>
-                      <td><?php echo $data['seguro'] ?></td>
-                      <td><?php echo $data['comentario'] ?></td>
-                      <td><?php echo $data['created_at'] ?></td>
-
+                      <?php if($estatus == 1){?>
+                      <td style="background-color: #02b102; color:aliceblue;"><b><?php echo number_format($monto - $data['descuento'], 0, '.', '.'); ?></b></td>
+                      <?php }else{?>
+                        <td><b><?php echo 0; ?></b></td>
+                      <?php }?>
+                        <td><?php echo $data['forma_pago'] ?></td>
+                        <td><?php echo $data['seguro'] ?></td>
+                     
                     </tr>
                 <?php }
-                } ?>
+                } 
+                
+               
+                
+                
+                ?>
               </tbody>
             </table>
             <section>
-              <p>Ingreso Total :</p>
-              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($total - $descuento, 0, '.', '.'); ?>.<b>GS</b></p>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!---------------------Tabla de gatos apara el reporte de rendicion----------------------------------->
-    <?php if($valor === 'DIAX'){?>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card">
-          <div class="titulos col-md-2">
-            <h5>Gastos Diarios</h5>
-          </div>
-          <div class="table-responsive pt-3">
-            <table class="table table-striped project-orders-table text-center">
+              <?php if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 3 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){?>
+                <p>Ingreso Total :</p>
+                <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($totalEfectivo - $descuento, 0, '.', '.'); ?>.<b>GS</b></p>
+                <p>Total Bio Paz Efectivo</p>
+                <p style="text-align: right;" class="alert alert-warning"> <?php echo number_format($cantidadPaz * 10000); ?>.<b>GS</b></p>
+                <p>Resultado Final</p>
+                <p style="text-align: right;" class="alert alert-success"> <?php echo number_format(($totalEfectivo - $descuento) - ($cantidadPaz * 10000)); ?>.<b>GS</b></p>
+              <?php }else{?>
+                <table class="table table-striped text-center">
+                <thead>
+                <th class="alert alert-success">Total Diax</th>
+                <th class="alert alert-info">Total Doctor</th>
+                <th class="alert alert-warning">Total Ingresado</th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><?php echo number_format($totalDiaxEfectivo,0,'.','.'); ?></td>
+                    <td><?php echo number_format($totalMedicoEfectivo ,0,'.','.'); ?></td>
+                    <td><?php echo number_format($totalEfectivo,0,'.','.'); ?></td>
+                  </tr>
+                </tbody>
+              </table>
+              <hr>
+              <table class="table table-striped text-center">
               <thead>
-                <tr>
-                  <th class="ml-5">ID</th>
-                  <th>Fecha</th>
-                  <th>Descripcion</th>
-                  <th>Monto</th>
-                </tr>
+                <th>Cantidad Bio Paz</th>
+                <th></th>
+                <th>Bio Paz Efectivo</th>
               </thead>
               <tbody>
-                <?php
-                // $fecha1 = "05-01-2023";
-                $fecha =  date('Y-m-d');
-                //  echo $fecha1." ".$fecha2;
-                //  exit;
-                $sql = mysqli_query($conection, "SELECT g.id,g.descripcion,g.monto,g.created_at  FROM gastos g 
-               where  g.created_at like '%" . $fecha . "%' and g.estatus = 1");
-
-                $resultado = mysqli_num_rows($sql);
-                $gasto = 0;
-
-                if ($resultado > 0) {
-                  while ($data = mysqli_fetch_array($sql)) {
-                    $gasto += (int)$data['monto'];
-
-                ?>
-                    <tr class="text-center">
-
-                      <td><?php echo $data['id'] ?></td>
-                      <td><?php echo $data['created_at'] ?></td>
-                      <td><?php echo $data['descripcion']; ?></td>
-                      <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
-                    </tr>
-
-
-                <?php }
-                } ?>
+                <tr>
+                  <td><?php echo $cantidadPaz; ?></td>
+                  <td></td>
+                  <td><?php echo number_format($cantidadPaz * 10000,0,'.','.'); ?></td>
+                </tr>
               </tbody>
-              <tr>
-                <td><b>Total A Gastos : </b></td>
-                <td></td>
-                <td></td>
-                
-                <td class="alert alert-success text-center">
-                  <?php echo number_format($gasto, 0, '.', '.'); ?>.<b>GS</b>
-                </td>
-
-
-              </tr>
             </table>
-            <section>
-              <?php
-              $totalDiario = $total - $descuento;
-              $rendicion = $totalDiario - $gasto;
-
-              ?>
-              <p>Rencion Final</p>
-              <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($rendicion, 0, '.', '.'); ?>.<b>GS</b></p>
+              <table class="table table-striped text-center">
+              <thead>
+                <th></th>
+                <th></th>
+                <th></th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Monto Total</td>
+                  <td></td>
+                  <td><?php echo number_format(($cantidadPaz * 10000) + $totalEfectivo,0,'.','.'); ?></td>
+                </tr>
+              </tbody>
+            </table>
+              <?php }?>
             </section>
           </div>
         </div>
       </div>
     </div>
     <?php }?>
+
+
+    <!---------------------Tabla de gatos apara el reporte de POST----------------------------------->
+    <?php if($resultado_post > 0){?>  
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <h5 class="text-center">Datos Pacientes</h5>
+          <div class="table-responsive">
+            <div>
+              
+              <p>Forma de pago : POST</p>
+            </div>
+            <table id="tabla_Usuario" class="table table-bordered table-condensed" style="font-size: 11px; margin-left: -35px;">
+              <thead>
+                <tr class="text-center"  style="font-size: 11px;font-weight: bold;">
+                  <th>Nro Ticket </th>
+                  <th>Ruc </th>
+                  <th>Nombre</th>
+                  <th>Estudio</th>
+                  <th>Monto</th>
+                  <th>Monto Seguro</th>
+                  <th>Desc.</th>
+                  <th>Monto Cobrado</th>
+                  <th>Forma de Pago</th>
+                  <th>Seguro</th>
+                
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+
+                $nro = 0;
+                $monto = 0;
+                $descuento = 0;
+                $totalPOST = 0;
+                $totalDiaxPOST = 0;
+                $totalMedicoPOST = 0;
+                $precio = 0;
+                $estatus = 0;
+
+                if ($resultado_post > 0) {
+                  while ($data = mysqli_fetch_array($sql_post)) {
+                    $estatus = $data['estatus'];
+                    if($estatus == 1){
+                      $precio = $data['monto'];
+                    }else{
+                      $precio = 0;
+                    }
+
+                    $descuento += (int)$data['descuento'];
+                    $nro++;
+
+                    if ($data['estudio'] == 'Radiografias') {
+                      $monto = $precio * $data['nro_radiografias'];
+                    } else if ($data['estudio'] != 'Radiografias') {
+                      $monto =  $precio;
+                    }
+
+                    $totalPOST += $monto;
+                    $totalDiaxPOST = $totalPOST * 0.3;
+                    $totalMedicoPOST = $totalPOST * 0.7;
+                ?>
+
+                     <?php if($estatus == 1){?>
+
+                    <tr class="text-center" style="font-size: 10px; font-weight: 500;">
+                <?php }else{?>
+                  <tr class="text-center alert alert-danger" style="font-size: 10px; font-weight: 500;">
+                <?php }?>
+                      <td><?php echo $data['id']; ?></td>
+                      <td><?php echo $data['ruc']; ?></td>
+                      <td><?php echo $data['razon_social']; ?></td>
+                      <td><?php echo $data['estudio']; ?></td>
+                      <td><?php echo number_format($monto, 0, '.', '.'); ?></td>
+                      <td><?php echo number_format($data['monto_seguro'], 0, '.', '.'); ?></td>
+                      <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
+                      <?php if($estatus == 1){?>
+                      <td style="background-color: #02b102; color:aliceblue;"><b><?php echo number_format($monto - $data['descuento'], 0, '.', '.'); ?></b></td>
+                      <?php }else{?>
+                        <td><b><?php echo 0; ?></b></td>
+                      <?php }?>
+                        <td><?php echo $data['forma_pago'] ?></td>
+                        <td><?php echo $data['seguro'] ?></td>
+                      
+                    </tr>
+                <?php }
+                } ?>
+              </tbody>
+            </table>
+            <section>
+              <?php if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 3 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){?>
+                  <p>Ingreso Total :</p>
+                <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($totalPOST - $descuento, 0, '.', '.'); ?>.<b>GS</b></p>
+                
+                <?php }else{?>
+                  <table class="table table-striped text-center">
+                  <thead>
+                  <th class="alert alert-success">Total Diax</th>
+                  <th class="alert alert-info">Total Doctor</th>
+                  <th class="alert alert-warning">Total Ingresado</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><?php echo number_format($totalDiaxPOST - $descuento,0,'.','.'); ?></td>
+                      <td><?php echo number_format($totalMedicoPOST - $descuento,0,'.','.'); ?></td>
+                      <td><?php echo number_format(($totalPOST - $descuento),0,'.','.'); ?></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <?php }?>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+    <?php }?>
+
+
+    <!---------------------Tabla de gatos apara el reporte de TRANSFERENCIA----------------------------------->
+    <?php if($resultado_transferencia > 0){?>  
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <h5 class="text-center">Datos Pacientes</h5>
+          <div class="table-responsive">
+            <div>
+              
+              <p>Forma de pago : TRANSFERENCIA</p>
+            </div>
+            <table id="tabla_Usuario" class="table table-bordered table-condensed" style="font-size: 11px; margin-left: -35px;">
+              <thead>
+                <tr class="text-center"  style="font-size: 11px;font-weight: bold;">
+                 <th>Nro Ticket </th>
+                  <th>Ruc </th>
+                  <th>Nombre</th>
+                  <th>Estudio</th>
+                  <th>Monto</th>
+                  <th>Monto Seguro</th>
+                  <th>Desc.</th>
+                  <th>Monto Cobrado</th>
+                  <th>Forma de Pago</th>
+                  <th>Seguro</th>
+                
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+
+                $nro = 0;
+                $monto = 0;
+                $descuento = 0;
+                $totalTransferencia = 0;
+                $totalDiaxTransferencia = 0;
+                $totalMedicoTransferencia = 0;
+                $precio = 0;
+                $estatus= 0;
+
+                if ($resultado_transferencia > 0) {
+                  while ($data = mysqli_fetch_array($sql_transferencia)) {
+                    $estatus = $data['estatus'];
+                    if($estatus == 1){
+                      $precio = $data['monto'];
+                    }else{
+                      $precio = 0;
+                    }
+                    $descuento += (int)$data['descuento'];
+                    $nro++;
+
+                    if ($data['estudio'] == 'Radiografias') {
+                      $monto = $precio * $data['nro_radiografias'];
+                    } else if ($data['estudio'] != 'Radiografias') {
+                      $monto =  $precio;
+                    }
+
+                    $totalTransferencia += $monto;
+                    $totalDiaxTransferencia = $totalTransferencia * 0.3;
+                    $totalMedicoTransferencia = $totalTransferencia * 0.7;
+                ?>
+ <?php if($estatus == 1){?>
+
+<tr class="text-center" style="font-size: 10px; font-weight: 500;">
+<?php }else{?>
+<tr class="text-center alert alert-danger" style="font-size: 10px; font-weight: 500;">
+<?php }?>
+ <td><?php echo $data['id']; ?></td>
+  <td><?php echo $data['ruc']; ?></td>
+  <td><?php echo $data['razon_social']; ?></td>
+  <td><?php echo $data['estudio']; ?></td>
+  <td><?php echo number_format($monto, 0, '.', '.'); ?></td>
+  <td><?php echo number_format($data['monto_seguro'], 0, '.', '.'); ?></td>
+  <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
+  <?php if($estatus == 1){?>
+  <td style="background-color: #02b102; color:aliceblue;"><b><?php echo number_format($monto - $data['descuento'], 0, '.', '.'); ?></b></td>
+  <?php }else{?>
+    <td><b><?php echo 0; ?></b></td>
+  <?php }?>
+    <td><?php echo $data['forma_pago'] ?></td>
+    <td><?php echo $data['seguro'] ?></td>
+                      
+                    </tr>
+                <?php }
+                } ?>
+              </tbody>
+            </table>
+            <section>
+              <?php if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 3 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){?>
+                  <p>Ingreso Total :</p>
+                <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($totalTransferencia - $descuento, 0, '.', '.'); ?>.<b>GS</b></p>
+                
+                <?php }else{?>
+                  <table class="table table-striped text-center">
+                  <thead>
+                  <th class="alert alert-success">Total Diax</th>
+                  <th class="alert alert-info">Total Doctor</th>
+                  <th class="alert alert-warning">Total Ingresado</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><?php echo number_format($totalDiaxTransferencia - $descuento,0,'.','.'); ?></td>
+                      <td><?php echo number_format($totalMedicoTransferencia - $descuento,0,'.','.'); ?></td>
+                      <td><?php echo number_format(($totalTransferencia - $descuento),0,'.','.'); ?></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <?php }?>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+    <?php }?>
+
+
+    <!---------------------Tabla de gatos apara el reporte de SEGUROS----------------------------------->
+    <?php if($resultado_seguros > 0){?>  
+    <div class="row">
+      <div class="col-md-12">
+        <div class="tile">
+          <h5 class="text-center">Datos Pacientes</h5>
+          <div class="table-responsive">
+            <div>
+            
+              <p>Forma de pago : SEGUROS</p>
+            </div>
+            <table id="tabla_Usuario" class="table table-bordered table-condensed" style="font-size: 11px; margin-left: -35px;">
+              <thead>
+                <tr class="text-center"  style="font-size: 11px;font-weight: bold;">
+                  <th>Nro Ticket </th>
+                  <th>Ruc </th>
+                  <th>Nombre</th>
+                  <th>Estudio</th>
+                  <th>Monto</th>
+                  <th>Monto Seguro</th>
+                  <th>Desc.</th>
+                  <th>Monto Cobrado</th>
+                  <th>Forma de Pago</th>
+                  <th>Seguro</th>
+                
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+
+                $nro = 0;
+                $monto = 0;
+                $descuento = 0;
+                $totalSeguro = 0;
+                $totalDiaxSeguro = 0;
+                $totalMedicoSeguro = 0;
+                $precio = 0;
+                $montoFinalSeguro = 0;
+                $estatus = 0;
+
+                if ($resultado_seguros > 0) {
+                  while ($data = mysqli_fetch_array($sql_seguros)) {
+                    $estatus = $data['estatus'];
+                    if($estatus == 1){
+                      $precio = $data['monto'];
+                    }else{
+                      $precio = 0;
+                    }
+
+                    $descuento += (int)$data['descuento'];
+                    $nro++;
+
+                    if ($data['estudio'] == 'Radiografias') {
+                      $monto = $precio * $data['nro_radiografias'];
+                    } else if ($data['estudio'] != 'Radiografias') {
+                      $monto =  $precio;
+                    }
+
+                    $totalSeguro += $monto;
+                    $montoFinalSeguro = $totalSeguro - $descuento;
+                    $totalDiaxSeguro = $montoFinalSeguro * 0.3;
+                    $totalMedicoSeguro = $montoFinalSeguro * 0.7;
+
+                ?>
+ <?php if($estatus == 1){?>
+
+<tr class="text-center" style="font-size: 10px; font-weight: 500;">
+<?php }else{?>
+<tr class="text-center alert alert-danger" style="font-size: 10px; font-weight: 500;">
+<?php }?>
+<td><?php echo $data['id']; ?></td>
+  <td><?php echo $data['ruc']; ?></td>
+  <td><?php echo $data['razon_social']; ?></td>
+  <td><?php echo $data['estudio']; ?></td>
+  <td><?php echo number_format($monto, 0, '.', '.'); ?></td>
+  <td><?php echo number_format($data['monto_seguro'], 0, '.', '.'); ?></td>
+  <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
+  <?php if($estatus == 1){?>
+  <td style="background-color: #02b102; color:aliceblue;"><b><?php echo number_format($monto - $data['descuento'], 0, '.', '.'); ?></b></td>
+  <?php }else{?>
+    <td><b><?php echo 0; ?></b></td>
+  <?php }?>
+    <td><?php echo $data['forma_pago'] ?></td>
+    <td><?php echo $data['seguro'] ?></td>
+                      
+                    </tr>
+                <?php }
+                } ?>
+              </tbody>
+            </table>
+            <section>
+            <?php if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 3 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){?>
+                  <p>Ingreso Total :</p>
+                <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($totalSeguro - $descuento, 0, '.', '.'); ?>.<b>GS</b></p>
+                
+                <?php }else{?>
+                  <table class="table table-striped text-center">
+                  <thead>
+                  <th class="alert alert-success">Total Diax</th>
+                  <th class="alert alert-info">Total Doctor</th>
+                  <th class="alert alert-warning">Total Ingresado</th>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><?php echo number_format($totalDiaxSeguro ,0,'.','.'); ?></td>
+                      <td><?php echo number_format($totalMedicoSeguro,0,'.','.'); ?></td>
+                      <td><?php echo number_format(($montoFinalSeguro),0,'.','.'); ?></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <?php }?>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+<?php }?>
   </main>
+
 </body>
 
 </html>
@@ -215,7 +667,7 @@ $dompdf->setOptions($options);
 $dompdf->loadHtml($html);
 
 //$dompdf->setPaper('letter');
-$dompdf->setPaper('a4', 'portrait');
+$dompdf->setPaper('A4', 'portrait');
 
 
 

@@ -14,6 +14,8 @@ if (!empty($_POST)) {
         
     } else {
 
+
+
         $id               = $_POST['id'];
         $motivo_anulado   = $_POST['motivo_anulado'];
         $estatus          = $_POST['estatus'];
@@ -36,7 +38,7 @@ if (!empty($_POST)) {
         $sql_update = mysqli_query($conection, "UPDATE comprobantes SET motivo_anulado = '$motivo_anulado', estatus = '$estatus'
 			WHERE id = $id");
 
-        if ($sql_update) {
+         if ($sql_update) {
 
             $alert = '<p class = "msg_success">Solicitado Correctamente</p>';
 
@@ -58,7 +60,7 @@ if (empty($_REQUEST['id'])) {
 
 $id = $_REQUEST['id'];
 
-$sql = mysqli_query($conection, "SELECT * FROM comprobantes  WHERE id = $id");
+$sql = mysqli_query($conection, "SELECT c.id,c.razon_social,c.ruc, c.motivo_anulado FROM comprobantes c  WHERE id = $id");
 
 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -72,7 +74,8 @@ if ($resultado == 0) {
     while ($data = mysqli_fetch_array($sql)) {
 
         $id                = $data['id'];
-        $motivo_anulado    = $data['motivo_anulado'];
+       $razon_social       = $data['razon_social'];
+       $motivo_anulado     = $data['motivo_anulado'];
     }
 }
 

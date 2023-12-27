@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }

@@ -5,7 +5,7 @@ $alert = '';
 
 
 if (!empty($_POST)) {
-    if (empty($_POST['nombre']) || empty($_POST['correo']) || empty($_POST['usuario']) || empty($_POST['pass']) || empty($_POST['rol'])) {
+    if (empty($_POST['nombre']) || empty($_POST['usuario']) || empty($_POST['pass']) || empty($_POST['rol'])) {
 
         $alert = '<p class = "msg_error">Debe llenar Todos los Campos</p>';
 

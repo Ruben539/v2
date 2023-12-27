@@ -30,7 +30,7 @@ require_once('../Controllers/grabarEstudio.php');
 
 
                 <div class="form-group">
-                  <label class="control-label">Precio Preferencial</label>
+                  <label class="control-label">Precio Normal</label>
                   <input class="form-control" type="text" name="preferencial" id="preferencial" placeholder="Ingrese el monto" required>
                 </div>
 
@@ -38,6 +38,24 @@ require_once('../Controllers/grabarEstudio.php');
                   <label class="control-label">Precio Hospitalarios</label>
                   <input class="form-control" type="text"  name=" hospitalario" id=" hospitalario"  placeholder="Ingrese el monto">
                 </div>
+
+                <div class="form-group">
+                  <label class="control-label">Categoria Estudio</label>
+                  <select class="chosen form-control" name="categoria_id" id="categoria_id" required data-placeholder="Seleccione la Categoria">
+                    <?php
+                    $raw_results4 = mysqli_query($conection, "SELECT  * FROM  categoria_estudio WHERE estatus = 1") or die(mysqli_error($conection));
+                    while ($results = mysqli_fetch_array($raw_results4)) {
+                    ?>
+                      <option value=" <?php echo $results['id'] ?> ">
+                        <?php echo $results['descripcion']; ?>
+                      </option>
+
+                    <?php
+                    }
+                    ?>
+                  </select>
+                </div>
+
                   <input type="hidden" name="estatus" id="estatus" value="1">
                 <button type="submit" class="btn btn-primary mr-2">Registrar</button>
                 <a class="btn btn-light" href="../Templates/estudios.php">Cancelar</a>

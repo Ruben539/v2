@@ -38,15 +38,15 @@ require_once('../Models/conexion.php');
             $ci          = $_POST['cedula'];
             $nombre      = $_POST['nombre'];    
             $doctor_id   = $_POST['doctor_id'];
-            $comentario  = $_POST['comentario'];
            
 
 //Item o valores para la tabla del detalle de comprobantes
+            $cobertura        = $_POST['cobertura'];
+            $comentario       = $_POST['comentario'];
             $descuento        = $_POST['descuento'];
             $seguro_id        = $_POST['seguro_id'];
-            $forma_pago_id    = $_POST['forma_pago_id'];
             $estudios         = $_POST['estudios'];
-            $nro_rayos        = $_POST['nro_rayos'];
+            $nro_rayos        = $_POST['nro_rayos'];  
 
 
 
@@ -76,27 +76,45 @@ require_once('../Models/conexion.php');
                             echo "<input type='hidden' name='razon_social' value='" . $nombre . "'>";
                             echo "<input type='hidden' name='paciente_id' value='" . $id . "'>";
                             echo "<input type='hidden' name='doctor_id' value='" . $doctor_id . "'>";
+                            echo "<input type='hidden' name='cobertura' value='" . $cobertura . "'>";
                             echo "<input type='hidden' name='comentario' value='" . $comentario . "'>";
                            // echo "<input type='hidden' name='estudios[]' value='" . $estudios . "'>";
                           
                            // echo "<input type='hidden' name='estudios[]' value='" . $estudios . "'>";
-                            $total = 0;
-                            $estudio = '';
-                            $monto = 0;
-                            $items = '';
-                            for ($i = 0; $i < count($estudios); $i++) {
-                                $estudio =  $estudios[$i];
-                        
-                                echo "<table class='table table-bordered'>";
-                                echo "<tbody>";
-                                echo "<input type='hidden' name='estudios[]' value='" .trim($estudios[$i]). "'>";
+                           $total = 0;
+                           $estudio = '';
+                           $monto = 0;
+                           $items = '';
+                           for ($i = 0; $i < count($estudios); $i++) {
+                               $estudio =  $estudios[$i];
+                       
+                               echo "<table class='table table-bordered'>";
+                               echo "<tbody>";
+                               echo "<input type='hidden' name='estudios[]' value='" .trim($estudios[$i]). "'>";
+
+                            if($seguro_id == 13){
+
+                                $raw_results2 = mysqli_query($conection, "select id, nombre, preferencial from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
+                               while ($results = mysqli_fetch_array($raw_results2)) {
+                                   $monto +=  $results['preferencial'];
+                                   echo "<tr><td>Estudio: ".$results['nombre']." </td><td align='right'>";
+                                  // echo "<input type='hidden' name='estudio_id[]' value='" .$results['id']. "'>";
+                                  // echo "<input type='hidden' name='descripcion[]' value='" .$results['nombre']. "'>";
+                                   //echo "<input type='hidden' name='monto[]' value='" .$results['preferencial']. "'>";
+                                   echo  number_format($results['preferencial'], 0, '.', '.'). "</td></tr>";
+                                   if ($results['nombre'] == 'Radiografias') {
+                                       $total = $results['preferencial'] * $nro_rayos;
+                                   }else{
+                                       $total +=  (int)$results['preferencial'];
+                                   }
+                                   
+                               }
+                            }else if($seguro_id != 13 && $seguro_id != 17){
+
                                 $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
                                 while ($results = mysqli_fetch_array($raw_results2)) {
                                     $monto +=  $results['seguro'];
                                     echo "<tr><td>Estudio: ".$results['nombre']." </td><td align='right'>";
-                                   // echo "<input type='hidden' name='estudio_id[]' value='" .$results['id']. "'>";
-                                   // echo "<input type='hidden' name='descripcion[]' value='" .$results['nombre']. "'>";
-                                    //echo "<input type='hidden' name='monto[]' value='" .$results['seguro']. "'>";
                                     echo  number_format($results['seguro'], 0, '.', '.'). "</td></tr>";
                                     if ($results['nombre'] == 'Radiografias') {
                                         $total = $results['seguro'] * $nro_rayos;
@@ -105,22 +123,45 @@ require_once('../Models/conexion.php');
                                     }
                                     
                                 }
+                            }else if($seguro_id == 17){
+
+                                $raw_results2 = mysqli_query($conection, "select id, nombre, hospitalario from estudios where id='" . trim($estudios[$i]) . "';") or die(mysqli_error($conection));
+                                while ($results = mysqli_fetch_array($raw_results2)) {
+                                    $monto +=  $results['hospitalario'];
+                                    echo "<tr><td>Estudio: ".$results['nombre']." </td><td align='right'>";
+                                    echo  number_format($results['hospitalario'], 0, '.', '.'). "</td></tr>";
+                                    if ($results['nombre'] == 'Radiografias') {
+                                        $total = $results['hospitalario'] * $nro_rayos;
+                                    }else{
+                                        $total +=  (int)$results['hospitalario'];
+                                    }
+                                    
+                                }
                             }
-                        
-                            $total = $total - $descuento;
-                            $total = number_format($total, 0, '.', '.');
+                              
+                           }
+                       
+                           $total = $total - $descuento;
+                           $total = number_format($total, 0, '.', '.');
                             if ($nro_rayos > 0) {
 
-                                echo "<tr><td>Rayos X Numero de Posiciones:</td><td align='right'>" . $nro_rayos . "</td></tr>";
+                                echo "<tr><td>Rayos X Numero de Posiciones:</td><td align='right'>" . $nro_rayos . "</td></tr>";                               
+                                                               
                                 #$estudio=$estudio." Numero de Posiciones Rayos X: ". $rayosx. ".";
                             }
-                            echo "<tr><td><b><i>Descuento:</td><td align='right'><b><i>" . number_format($descuento, 0, '.', '.')  . "</td></tr>";
+                            echo "<tr><td>Descuento Aplicado :</td><td align='right'>" . number_format($descuento,0,'.','.') . "</td></tr>";
+                            if($cobertura == 2){
+                                echo "<tr><td>Cobertura del Estudio :</td><td align='right'>Completa</td></tr>";
+                            }else{
+                                echo "<tr><td>Cobertura del Estudio :</td><td align='right'>Preferencial</td></tr>";
+                            }
+                            
                             echo "<tr><td><b><i>Total a Cobrar:</td><td align='right'><b><i>" . $total . "</td></tr>";
                             echo "</tbody>";
                             echo "</table>";
-                            echo "<input type='hidden' name='seguro_id' value=" . $seguro_id . ">";
-                            echo "<input type='hidden' name='forma_pago_id' value='" . $forma_pago_id . "'>";
                             echo "<input type='hidden' name='descuento' value='" . $descuento . "'>";
+                            echo "<input type='hidden' name='seguro_id' value=" . $seguro_id . ">";
+                            echo "<input type='hidden' name='nro_rayos' value=" . $nro_rayos . ">";
                             echo "<table class='table'><tr><td><input class='btn btn-primary' type='submit' value='Guardar'>&nbsp;&nbsp;&nbsp;<a class='btn btn-secondary' href='../Templates/orden.php'><i class='fa fa-fw fa-lg fa-times-circle'></i>Cancelar</a></td></tr></table>";
                             echo "</form>";
                             ?>

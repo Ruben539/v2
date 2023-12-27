@@ -23,20 +23,56 @@ require_once('../Models/conexion.php');
                         <h4>Rendicion de Estudios <i class="typcn typcn-flow-children"></i> </h4>
 
                         <form class="row" method="POST" id='formEstudios' name='formEstudios'>
-                            <div class="col-md-5">
+                            <div class="col-md-6">
                                 <div class="widget-small">
                                     <input type="date" name="fecha_desde" id="fecha_desde" class="form-control">
                                 </div>
                             </div>
 
-                            <div class="col-md-5">
+                            <div class="col-md-6">
                                 <div class="widget-small">
                                     <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control">
                                 </div>
                             </div>
-           
+                           
 
-                            <div class="col-md-2">
+                            <div class="col-md-12">
+                                <label for=""></label>
+                                <div class="widget-small">
+                                    <?php
+                                    include "../Models/conexion.php";
+
+                                    $query_estudio = mysqli_query($conection, "SELECT e.id,e.nombre,e.seguro,e.preferencial,e.hospitalario
+                                    FROM estudios e where e.estatus = 1 ORDER BY e.id DESC");
+
+                                    mysqli_close($conection); //con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
+                                    $resultado = mysqli_num_rows($query_estudio);
+
+                                    ?>
+                                    <select name="estudio" id="estudio" class="chosen form-control">
+                                        <?php
+
+                                        if ($resultado > 0) {
+                                            while ($estudio = mysqli_fetch_array($query_estudio)) {
+
+                                        ?>
+                                                <option value="<?php echo $estudio["id"]; ?>"><?php echo
+                                                $estudio["nombre"] ?></option>
+
+                                        <?php
+
+
+                                            }
+                                        }
+
+                                        ?>
+                                    </select>
+                                </div>
+                                <label for=""></label>
+                            </div>
+
+                                    
+                            <div>
 
                                 <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-search"></i>Filtrar
 
@@ -48,7 +84,7 @@ require_once('../Models/conexion.php');
                         <div class="col-md-12">
                             <div class="tile">
                                 <div class="table-responsive">
-                                    <table id="tablaResultado" class="table table-striped table-bordered table-condensed" style="width:100%">
+                                    <table id="tabla" class="table table-striped table-bordered table-condensed" style="width:100%">
 
                                     </table>
                                 </div>

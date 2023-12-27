@@ -7,7 +7,7 @@ $hoy =  date('Y-m-d');
 $id = $_REQUEST['id'];
 
 $sql = mysqli_query($conection,"SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,u.fecha_nac,u.nombre,
-SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
+SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,dc.comentario, c.created_at
 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
 INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
 INNER JOIN seguros s ON s.id = dc.seguro_id INNER JOIN usuarios u ON u.id = c.paciente_id
@@ -76,47 +76,9 @@ ob_start();
                 <th>Fecha Carga</th>
                 <th>Estudio /os</th>
                 <th>Medico</th>
-                <th>Monto</th>
-                <th>ID</th>
-                
-
-                </tr>
-              </thead>
-
-              <tbody>
-                
-                    <tr class="text-center">
-
-                    <td><?php echo $ruc; ?></td>
-                    <td><?php echo $nombre; ?></td>
-                    <td><?php echo $fecha_nac; ?></td>
-                    <td><?php echo $created_at; ?></td>
-                    <td><?php echo $estudio; ?></td>
-                    <td><?php echo $medico; ?></td>
-                    <td><?php echo $monto; ?></td>
-                    <td><?php echo $id; ?></td>
-                
-                    </tr>
-
-              </tbody>  
-           </table>
-          </div>
-
-          <h5 class="text-center">Uso Interno</h5>
-          <div class="table-responsive" >
-            <table id="tabla_Usuario" class="table table-striped table-bordered table-condensed" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25); font-size: 10px;">
-              <thead>
-                <tr class="text-center">
-
-                <th>Cedula</th>
-                <th>Nombre</th>
-                <th>F. Nacimiento</th>
-                <th>Fecha Carga</th>
-                <th>Estudio /os</th>
-                <th>Medico</th>
-                <th>Monto</th>
-                <th>Descuento</th>
                 <th>Seguro</th>
+                <th>Monto</th>
+                <th>Comentario</th>
                 <th>ID</th>
                 
 
@@ -133,9 +95,9 @@ ob_start();
                     <td><?php echo $created_at; ?></td>
                     <td><?php echo $estudio; ?></td>
                     <td><?php echo $medico; ?></td>
-                    <td><?php echo $monto; ?></td>
-                    <td><?php echo $descuento; ?></td>
                     <td><?php echo $seguro; ?></td>
+                    <td><?php echo $monto; ?></td>
+                    <td><?php echo $comentario; ?></td>
                     <td><?php echo $id; ?></td>
                 
                     </tr>
@@ -143,9 +105,8 @@ ob_start();
               </tbody>  
            </table>
           </div>
-        </div>
-      </div>
-    </div>
+
+
 
 
   </main>

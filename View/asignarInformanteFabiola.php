@@ -25,7 +25,7 @@ require_once('../Controllers/AsignarInformanteFabiola.php');
                                     $query_medicos = mysqli_query($conection, "SELECT m.id,m.nombre,e.descripcion FROM especialidad_doctores ed
                                     INNER JOIN medicos m ON m.id = ed.doctor_id
                                     INNER JOIN especialidades e ON e.id = ed.especialidad_id
-                                    WHERE e.id = 3 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
+                                    WHERE e.id = 4 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
 
                                     mysqli_close($conection); //con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
                                     $resultado = mysqli_num_rows($query_medicos);
@@ -52,7 +52,7 @@ require_once('../Controllers/AsignarInformanteFabiola.php');
                                 </div>
                                 <div class="form-group">
                                     <label class="control-label"> Nro de Palcas</label>
-                                    <input class="form-control" type="number" name="nro_placas" id="nro_placas" placeholder="Ingrese el monto" required value="<?php echo $descripcion; ?>">
+                                    <input class="form-control" type="number" name="nro_placas" id="nro_placas" placeholder="Ingrese el monto">
                                 </div>
 
 

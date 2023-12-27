@@ -42,7 +42,7 @@ require_once('../Models/conexion.php');
                                 <tbody>
                                     <?php
                                        $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.nro_cheque,c.tipo_salida,
-                                       c.monto,c.concepto,c.usuario,c.created_at,fecha,c.aprobado,c.observacion
+                                       c.monto,c.concepto,c.usuario,c.created_at,c.proveedor,c.aprobado,c.observacion
                                        FROM empresa_movimientos c where  c.estatus = 0 ");
                                   
                                     $resultado = mysqli_num_rows($sql);
@@ -54,7 +54,7 @@ require_once('../Models/conexion.php');
                                             <tr class="text-center">
 
                                                 <td><?php echo $row; ?></td>
-                                                <td><?php echo $data['fecha']; ?></td>
+                                                <td><?php echo $data['created_at']; ?></td>
                                                 <td><?php echo $data['forma_pago']; ?></td>
                                                 <td><?php echo $data['nro_cheque']; ?></td>
                                                 <td><?php echo $data['tipo_salida']; ?></td>

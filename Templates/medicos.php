@@ -37,6 +37,10 @@ require_once('../Models/conexion.php');
                                         <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  ) { ?>
                                             <th>Agregar</th>
                                             <th>Eliminar</th>
+                                        <?php if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 5  || $_SESSION['rol'] == 6 ) { ?>
+                                            <th>Credenciales</th>
+                                        <?php } ?>
+                                            <th>Referencista</th>
                                         <?php } ?>
                                         
                                     </tr>
@@ -76,16 +80,16 @@ require_once('../Models/conexion.php');
                                                 <?php } ?>
 
 
-                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 ) { ?>
                                                     <td>
-                                                        <a href="../View/credencialesMedico.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-user-add" aria-hidden="true"></i>
+                                                        <a href="../View/credencialesMedico.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-key" aria-hidden="true"></i>
                                                         </a>
                                                     </td>
                                                 <?php } ?>
 
                                                 <?php if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 5 ) { ?>
                                                     <td>
-                                                        <a href="#" onclick="permisoAuto()" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-user-add"></i></a>
+                                                        <a href="#" onclick="permisoAuto()" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-key"></i></a>
                                                     </td>
                                                 <?php } ?>
                                                 
@@ -94,6 +98,11 @@ require_once('../Models/conexion.php');
                                                     <button class="btn btn-outline-danger" onclick="EliminarDoctor('<?php echo $data['id'] ?>')"><i class="typcn typcn-user-delete" aria-hidden="true"></i></button>
 
                                                 </td>
+                                                <?php } ?>
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
+                                                    <td>
+                                                        <a href="../View/referirMedico.php?id=<?php echo $data['id']; ?>" class="btn btn-outline-primary" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-phone-outline"></i></a>
+                                                    </td>
                                                 <?php } ?>
                                             </tr>
 

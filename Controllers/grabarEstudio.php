@@ -16,6 +16,7 @@ if (!empty($_POST)) {
 		$seguro        = $_POST['seguro'];
 		$preferencial  = $_POST['preferencial'];
 		$hospitalario  = $_POST['hospitalario'];
+		$categoria_id  = $_POST['categoria_id'];
 		
 
 		$resultado = 0;
@@ -26,8 +27,8 @@ if (!empty($_POST)) {
 
 
 
-			$query_insert = mysqli_query($conection,"INSERT INTO estudios(nombre,seguro,preferencial,hospitalario)
-				VALUES('$nombre','$seguro','$preferencial','$hospitalario')");
+			$query_insert = mysqli_query($conection,"INSERT INTO estudios(nombre,seguro,preferencial,hospitalario,categoria_id)
+				VALUES('$nombre','$seguro','$preferencial','$hospitalario','$categoria_id')");
 
 			if ($query_insert ) {
 				$alert = '<p class = "msg_save">Registro Guardado Correctamente</p>';

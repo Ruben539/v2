@@ -1,6 +1,6 @@
 <?php
-//print_r($_POST);
-//exit();
+  // print_r($_POST);
+  // exit();
 
 session_start();
 require_once("../Models/conexion.php");
@@ -23,14 +23,15 @@ $doctor_id     = $_POST['doctor_id'];
 $usuario_1     = $idusuario;
 $comentario    = $_POST['comentario'];
 $estado        = 'En Espera';
+$estatus       = 3;
 
 //Query para el grabado en la tabla de comprobantes.
 
-$query_comprobante = mysqli_query($conection, "INSERT INTO comprobantes(ruc,razon_social,paciente_id,doctor_id,usuario_1,comentario,estado) 
-    VALUES('$ruc','$razon_social','$paciente_id','$doctor_id','$usuario_1','$comentario','$estado')");
+$query_comprobante = mysqli_query($conection, "INSERT INTO comprobantes(ruc,razon_social,paciente_id,doctor_id,usuario_1,comentario,estado,estatus) 
+    VALUES('$ruc','$razon_social','$paciente_id','$doctor_id','$usuario_1','$comentario','$estado','$estatus')");
 
 if ($query_comprobante) {
-
+  
   $hoy =  date('Y-m-d');
 
   $sql = mysqli_query($conection, "SELECT c.id FROM comprobantes c WHERE  c.created_at like '%$hoy%'  ORDER BY id DESC LIMIT 1 ");
@@ -49,33 +50,79 @@ if ($query_comprobante) {
     }
   }
   //Datos para grabar en el detalle de los comprobantes;
+  $descuento       = $_POST['descuento'];
   $seguro_id       = $_POST['seguro_id'];
   $estudios        = $_POST['estudios'];
-  $forma_pago_id   = $_POST['forma_pago_id'];
-  $descuento       = $_POST['descuento'];
+  $cobertura       = $_POST['cobertura'];
+  $nro_rayos       = $_POST['nro_rayos'];
   $comprobante_id  = $id;
+  
 
  
    $descripcion     = '';
    $monto           = '';
 
   for ($i = 0; $i < count($estudios); $i++) {
-  
-    $raw_results2 = mysqli_query($conection, "select id, nombre, seguro from estudios where id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
-    while ($results = mysqli_fetch_array($raw_results2)) {
-      $id = $results['id'];
-      $descripcion = $results['nombre'];
-      $monto += (int)$results['seguro'];
+
+    if($seguro_id == 13){
+      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, preferencial FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
+      while ($results = mysqli_fetch_array($raw_results2)) {
+        $id = $results['id'];
+        $descripcion = $results['nombre'];
+        $monto = $results['preferencial'];
+      }
+
+    }else if($seguro_id != 13 && $seguro_id != 17){
+      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, seguro FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
+      while ($results = mysqli_fetch_array($raw_results2)) {
+        $id = $results['id'];
+        $descripcion = $results['nombre'];
+        $monto = $results['seguro'];
+      }
+    }else if($seguro_id == 17){
+      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, hospitalario FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
+      while ($results = mysqli_fetch_array($raw_results2)) {
+        $id = $results['id'];
+        $descripcion = $results['nombre'];
+        $monto = $results['hospitalario'];
+      }
     }
-    $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,descuento,seguro_id,forma_pago_id,descripcion) 
-    VALUES('$comprobante_id','$id','$monto','$descuento','$seguro_id','$forma_pago_id','$descripcion')");
+  
+    
+
+    if($cobertura == 1){
+
+      if($seguro_id == 13){
+        $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,cobertura,seguro_id,descuento,descripcion,nro_radiografias,condicion_venta) 
+        VALUES('$comprobante_id','$id','$monto','$cobertura','$seguro_id','$descuento','$descripcion','$nro_rayos','contado')");
+      }else if($seguro_id != 13 && $seguro_id != 17){
+        $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,cobertura,seguro_id,descuento,descripcion,nro_radiografias,condicion_venta) 
+        VALUES('$comprobante_id','$id','$monto','$cobertura','$seguro_id','$descuento','$descripcion','$nro_rayos','contado')");
+      }else if($seguro_id == 17){
+        $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,cobertura,seguro_id,descuento,descripcion,nro_radiografias,condicion_venta) 
+        VALUES('$comprobante_id','$id','$monto','$cobertura','$seguro_id','$descuento','$descripcion','$nro_rayos','contado')");
+      }
+
+   
+    }else if($cobertura == 2){
+      if($seguro_id != 13 && $seguro_id != 17){
+
+        $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto_seguro,cobertura,seguro_id,descuento,descripcion,nro_radiografias,condicion_venta) 
+        VALUES('$comprobante_id','$id','$monto','$cobertura','$seguro_id','$descuento','$descripcion','$nro_rayos','credito')");
+      }else{
+        echo "<script>javascript:alert('No puede Cargar sin segura a una Cobertura Completa');</script>";
+        exit();
+      }
+      
+    }
+   
   }
 }
 
-
+$id = $comprobante_id;
 
 if ($quey_detalle) {
-  header('location: Impresiones.php');
+  header("Location: Impresiones.php?id=$id");
 } else {
   echo "<script>javascript:alert('Ha ocurrido un error');</script>";
   exit();

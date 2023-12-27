@@ -17,7 +17,7 @@ require_once('../Controllers/asignarEspecialidadMedico.php');
                             </p>
                             <form class="forms-sample" method="POST" action="">
                                 <div class="form-group">
-                                <label class="control-label">Medico</label>
+                                    <label class="control-label">Medico</label>
                                     <select class="chosen form-control" name="doctor_id" id="doctor_id" required data-placeholder="Seleccione un Medico">
                                         <option value=""></option>
                                         <?php
@@ -73,16 +73,12 @@ require_once('../Controllers/asignarEspecialidadMedico.php');
 
             <?php include('../includes/footer_admin.php'); ?>
             <script type="text/javascript" src="../assets/js/jquery-3.3.1.min.js"></script>
-<link rel="stylesheet" href="../node_modules/chosen-js/chosen.css" type="text/css" />
-<script src="../node_modules/chosen-js/chosen.jquery.min.js"></script>
-<script src="../js/jquery-3.3.1.min.js"></script>
-<script src="../node_modules/chosen-js/chosen.jquery.js"></script>
-<script>
-           
-           $(document).ready(function() {
-           $(".chosen").chosen();
-           
-       });
-       
-      
-   </script>
+            <link rel="stylesheet" href="../node_modules/chosen-js/chosen.css" type="text/css" />
+            <script src="../node_modules/chosen-js/chosen.jquery.min.js"></script>
+            <script src="../node_modules/chosen-js/chosen.jquery.js"></script>
+            <script>
+                $(document).ready(function() {
+                    $(".chosen").chosen();
+
+                });
+            </script>

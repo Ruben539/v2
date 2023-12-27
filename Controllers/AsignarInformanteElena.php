@@ -47,7 +47,7 @@ $alert = '';
 				$alert = '<p class = "msg_save">Asignado Correctamente</p>';
 	
 			}else{
-				$alert = '<p class = "msg_error">Error al Actualizar el Registro</p>';
+				$alert = '<p class = "msg_error">Error al asignar Informante</p>';
 			}
 		}
 		mysqli_close($conection);

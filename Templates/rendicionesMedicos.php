@@ -22,7 +22,7 @@ require_once('../Models/conexion.php');
                     <div class="card-body">
                         <h4>Rendicion de Medicos <i class="typcn typcn-flow-children"></i> </h4>
 
-                        <form class="row" method="POST" action="../Reports/reporteMedico.php">
+                        <form class="row" method="POST" action="../Reports/reporteMedicoPDF.php" target="_blank">
                             <div class="col-md-5">
                                 <div class="widget-small">
                                     <input type="date" name="fecha_desde" id="fecha_desde" class="form-control">
@@ -38,8 +38,8 @@ require_once('../Models/conexion.php');
                             <div class="col-md-12">
                                 <div class="widget-small">
                                 <div class="form-group">
-                                <label for="doctor"></label>
-                                <select class="chosen form-control" name="doctor" id="doctor"  data-placeholder="Seleccione un Medico">
+                                <label for="medico"></label>
+                                <select class="chosen form-control" name="medico" id="medico"  data-placeholder="Seleccione un Medico">
                                             <option value=""></option>
                                             <?php
                                             $raw_results4 = mysqli_query($conection, "select * from medicos;") or die(mysqli_error($conection));

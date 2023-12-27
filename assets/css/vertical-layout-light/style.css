@@ -10488,7 +10488,7 @@ pre code {
   color: #495057;
   background-color: #ffffff;
   background-clip: padding-box;
-  border: 1px solid #ced4da;
+  border: 1px solid black;
   border-radius: 2px;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
@@ -19277,11 +19277,12 @@ code {
   justify-content: center;
 }
 .titulos{
+
   border: 1px solid #0050e3;
   border-radius: 3px;
   background-color: trasnparent;
   color: #0050e3;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 3px 10px  rgba(0, 0, 0, 0.15);
   font-size: 12px;
 }
 

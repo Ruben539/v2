@@ -43,7 +43,7 @@ require_once('../Models/conexion.php');
 				$query_medicos = mysqli_query($conection,"SELECT m.id,m.nombre,e.descripcion FROM especialidad_doctores ed
                 INNER JOIN medicos m ON m.id = ed.doctor_id
                 INNER JOIN especialidades e ON e.id = ed.especialidad_id
-                WHERE e.id = 3 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
+                WHERE e.id = 30 AND m.estatus = 1 AND e.estatus = 1 AND ed.estatus = 1");
 
 				mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 				$resultado = mysqli_num_rows($query_medicos);

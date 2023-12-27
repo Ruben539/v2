@@ -19,7 +19,7 @@ require_once("../Models/conexion.php");
             $tipo_salida   = $_POST['tipo_salida'];
             $monto         = $_POST['monto'];
             $concepto      = trim($_POST['concepto']);
-            $fecha         = $_POST['fecha'];
+            $proveedor     = $_POST['proveedor'];
            
 	
 	
@@ -42,7 +42,7 @@ require_once("../Models/conexion.php");
 		}else{
 	
 			$sql_update = mysqli_query($conection,"UPDATE empresa_movimientos SET forma_pago = '$forma_pago',nro_cheque = '$nro_cheque',
-            tipo_salida = '$tipo_salida',monto = '$monto',concepto = '$concepto', fecha = '$fecha'
+            tipo_salida = '$tipo_salida',monto = '$monto',concepto = '$concepto', proveedor = '$proveedor'
 				WHERE id = $id");
 	
 			if ($sql_update) {
@@ -58,7 +58,7 @@ require_once("../Models/conexion.php");
 //Recuperacion de datos para mostrar al seleccionar Actualizar
 
 if (empty($_REQUEST['id'])) {
-	header('location: ../Plantillas/caja_chica.php');
+	header('location: ../Templates/movimientosFinacieros.php');
 
 	//mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -74,7 +74,7 @@ $sql = mysqli_query($conection,"SELECT * FROM empresa_movimientos  WHERE id = $i
 $resultado = mysqli_num_rows($sql);
 
 if ($resultado == 0) {
-	header("location: ../Plantillas/caja_chica.php");
+	header("location: ../Templates/movimientosFinacieros.php");
 }else{
 	$option = '';
 	while ($data = mysqli_fetch_array($sql)) {
@@ -85,7 +85,7 @@ if ($resultado == 0) {
         $tipo_salida   = $data['tipo_salida'];
         $monto         = $data['monto'];
         $concepto      = $data['concepto'];
-        $fecha         = $data['fecha'];
+        $proveedor     = $data['proveedor'];
 
 	}
 }

@@ -21,10 +21,6 @@ $alert = '';
 			
 	
 	
-	//echo "SELECT * FROM usuario
-	
-			//WHERE(usuario = '$user' AND idusuario != $id) or (correo = '$email' AND idusuario != $id";
-	//exit; sirve para ejectuar la consulta en mysql
 			$query = mysqli_query($conection,"SELECT * FROM comprobantes
 				WHERE  id != id"
 			);

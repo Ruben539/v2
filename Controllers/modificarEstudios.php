@@ -14,11 +14,12 @@ if (!empty($_POST)) {
 
 	}else{
 
-		$id              = $_POST['id'];
-		$nombre         = $_POST['nombre'];
-		$seguro       = $_POST['seguro'];
+		$id               = $_POST['id'];
+		$nombre           = $_POST['nombre'];
+		$seguro           = $_POST['seguro'];
 		$preferencial     = $_POST['preferencial'];
-		$hospitalario      = $_POST['hospitalario'];
+		$hospitalario     = $_POST['hospitalario'];
+		$categoria_id     = $_POST['categoria_id'];
 		
 
 
@@ -41,7 +42,7 @@ if (!empty($_POST)) {
 	}else{
 
 		$sql_update = mysqli_query($conection,"UPDATE estudios SET nombre = '$nombre', seguro = '$seguro',
-		 preferencial = '$preferencial', hospitalario = '$hospitalario' WHERE id = $id");
+		 preferencial = '$preferencial', hospitalario = '$hospitalario', categoria_id = '$categoria_id' WHERE id = $id");
 
 		if ($sql_update) {
 
@@ -56,7 +57,7 @@ if (!empty($_POST)) {
 //Recuperacion de datos para mostrar al seleccionar Actualizar
 
 if (empty($_REQUEST['id'])) {
-	header('location: ../Plantillas/estudios.php');
+	header('location: ../Templates/estudios.php');
 
 	//mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -64,7 +65,8 @@ if (empty($_REQUEST['id'])) {
 
 $id = $_REQUEST['id'];
 
-$sql = mysqli_query($conection,"SELECT * FROM estudios  WHERE id = $id");   
+$sql = mysqli_query($conection,"SELECT e.id,e.nombre,e.seguro,e.preferencial,e.hospitalario,ce.descripcion
+FROM estudios e INNER JOIN categoria_estudio ce ON ce.id = e.categoria_id WHERE e.id = $id AND e.estatus = 1");   
 
 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
 
@@ -72,7 +74,7 @@ $sql = mysqli_query($conection,"SELECT * FROM estudios  WHERE id = $id");
 $resultado = mysqli_num_rows($sql);
 
 if ($resultado == 0) {
-	header("location: ../Plantillas/estudios.php");
+	header("location: ../Templates/estudios.php");
 }else{
 	$option = '';
 	while ($data = mysqli_fetch_array($sql)) {
@@ -82,6 +84,7 @@ if ($resultado == 0) {
 		$seguro        = $data['seguro'];
 		$preferencial  = $data['preferencial'];
 		$hospitalario  = $data['hospitalario'];
+		$descripcion   = $data['descripcion'];
 
 	}
 }
