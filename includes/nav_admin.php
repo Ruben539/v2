@@ -278,7 +278,8 @@ $resultado = mysqli_num_rows($query_comprobantes);
               </ul>
             </div>
           </li>
-
+          <?php }?>
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 ){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
               <i class="typcn typcn-flow-children menu-icon"></i>
@@ -287,14 +288,15 @@ $resultado = mysqli_num_rows($query_comprobantes);
             </a>
             <div class="collapse" id="auth">
               <ul class="nav flex-column sub-menu">
+                
                 <li class="nav-item"> <a class="nav-link" href="../Templates/estudios.php"> Lista de Estudios </a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/estudiosEliminados.php"> Estudios Eliminados </a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/rendicionEstudios.php"> Rendición de Estudios</a></li>
               </ul>
             </div>
           </li>
-        
-          
+          <?php }?>
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  ){?>
           <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#seguros" aria-expanded="false" aria-controls="seguros">
               <i class="typcn typcn-contacts menu-icon"></i>

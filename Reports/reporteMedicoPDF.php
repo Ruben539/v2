@@ -30,7 +30,7 @@ $buscar = "fecha_desde=$desde&fecha_hasta=$hasta ";
 
 /* INICIO DE LA COSULTA PA OBTENER LA LISTA DE BUSQUEDA */
 
-$sql_reporte = mysqli_query($conection, "SELECT c.ruc, c.razon_social, dc.descripcion as estudio, dc.monto,dc.monto_seguro,
+$sql_reporte = mysqli_query($conection, "SELECT c.ruc, c.razon_social, c.created_at,dc.descripcion as estudio, dc.monto,dc.monto_seguro,
 dc.descuento,dc.nro_radiografias,fp.descripcion as forma_pago,s.descripcion as seguro,dc.pago_diferido,
 IF(c.estatus = 1, dc.monto, 0) as monto,
 IF(c.estatus = 1, dc.descuento, 0) as descuento
@@ -118,6 +118,7 @@ ob_start();
             <table id="tabla_Usuario" class="table table-bordered table-condensed" style="font-size: 12px; margin-left: -35px;">
               <thead>
                 <tr class="text-center" style="font-size: 12px;font-weight: bold;">
+                  <th>Hora </th>
                   <th>Ruc </th>
                   <th>Nombre</th>
                   <th>Estudio</th>
@@ -144,6 +145,7 @@ ob_start();
                   
                 ?>
                   <tr>
+                    <td><?php echo date_format($data['created_at'], 'H:i:s'); ?></td>
                     <td><?php echo number_format($data['ruc'], 0, '.', '.'); ?></td>
                     <td><?php echo $data['razon_social']; ?></td>
                     <td><?php echo $data['estudio']; ?></td>
