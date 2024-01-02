@@ -134,7 +134,7 @@ require_once("../includes/header_admin.php");
                 $fecha =  date('Y-m-d');
                 //  echo $fecha1." ".$fecha2;
                 //  exit;
-                $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.estudio _id,dc.descuento, m.nombre as doctor, 
+                $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
                 fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
                 IF(c.estatus = 1, dc.monto, 0) as monto,
                 IF(c.estatus = 1, dc.descuento, 0) as descuento

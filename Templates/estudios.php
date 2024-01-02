@@ -1,7 +1,7 @@
 <?php
 require_once("../includes/header_admin.php");
 
-if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) {
+if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
     if (empty($_SESSION['active'])) {
         header('location: salir.php');
     }
@@ -70,6 +70,12 @@ require_once('../Models/conexion.php');
                                                         <a href="../View/modificarEstudios.php?id=<?php echo $ver[0]; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-edit"></i></a>
                                                     </td>
                                                 <?php } ?>
+                                                <?php if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 5) { ?>
+                                                    <td>
+                                                        <a href="#" onclick="permisoEditar()" class="btn btn-outline-danger" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-trash"></i></a>
+                                                    </td>
+                                                <?php } ?>
+                                                
                                                 <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
                                                 <td>
                                                     <button class="btn btn-outline-danger" onclick="EliminarEstudio('<?php echo $ver[0] ?>')"><i class="typcn typcn-trash" aria-hidden="true"></i></button>
@@ -80,7 +86,7 @@ require_once('../Models/conexion.php');
 
                                                 <?php if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 5) { ?>
                                                     <td>
-                                                        <a href="#" onclick="permisoAuto()" class="btn btn-outline-danger" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-trash"></i></a>
+                                                        <a href="#" onclick="permisoEliminar()" class="btn btn-outline-danger" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-trash"></i></a>
                                                     </td>
                                                 <?php } ?>
                                             </tr>
@@ -114,7 +120,25 @@ require_once('../Models/conexion.php');
             </script>
             <!--Srcip para vaildar el boton de Usuarios-->
             <script>
-                function permisoAuto() {
+                function permisoEditar() {
+                    Swal.fire({
+                        /*toast: true,*/
+                        position: 'center',
+                        title: 'Mensaje del Sistema !',
+                        text: 'No posee el permiso para editar un Medico',
+                        footer: 'Contactar con el administrador del sistema!',
+                        imageUrl: '../assets/images/logo.png',
+                        imageWidth: 300,
+                        imageHeight: 200,
+                        imageAlt: 'Custom image',
+                        showConfirmButton: false,
+                        timer: 5000,
+
+                    })
+                }
+            </script>
+            <script>
+                function permisoEliminar() {
                     Swal.fire({
                         /*toast: true,*/
                         position: 'center',

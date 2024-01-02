@@ -108,7 +108,7 @@ require_once('../Models/conexion.php');
                                 <select name="estudios[]" class="chosen form-control" data-placeholder="Elige uno o varios estudios" multiple>
                                     <option value=""></option>
                                     <?php
-                                    $raw_results3 = mysqli_query($conection, "select * from estudios where nombre not like '%TAC%' and estatus = 1;") or die(mysqli_error($conection));
+                                    $raw_results3 = mysqli_query($conection, "SELECT * FROM estudios WHERE nombre NOT LIKE '%TAC%' AND estatus = 1;") or die(mysqli_error($conection));
                                     while ($results = mysqli_fetch_array($raw_results3)) {
                                     ?>
                                         <option value=" <?php echo $results['id'] ?> ">
@@ -123,7 +123,7 @@ require_once('../Models/conexion.php');
 
                             <div class="form-group">
                                 <label for="nro_rayos">Posición de Rayos</label>
-                                <input type="number" class="form-control" name="nro_rayos" id="nro_rayos">
+                                <input type="number" class="form-control" name="nro_rayos" id="nro_rayos" value="1">
                             </div>
 
                             <div class="form-group">
@@ -131,7 +131,7 @@ require_once('../Models/conexion.php');
                                 <select class="chosen form-control" name="doctor_id" id="doctor_id" required data-placeholder="Seleccione un Medico">
                                     <option value=""></option>
                                     <?php
-                                    $raw_results4 = mysqli_query($conection, "select * from medicos where estatus = 1;") or die(mysqli_error($conection));
+                                    $raw_results4 = mysqli_query($conection, "SELECT * FROM medicos WHERE estatus = 1;") or die(mysqli_error($conection));
                                     while ($results = mysqli_fetch_array($raw_results4)) {
                                     ?>
 
@@ -150,7 +150,7 @@ require_once('../Models/conexion.php');
                                 <select class="chosen form-control" name="seguro_id" id="seguro_id" required data-placeholder="Seleccione un Seguro">
                                     <option value=""></option>
                                     <?php
-                                    $raw_results4 = mysqli_query($conection, "select * from seguros where estatus = 1;") or die(mysqli_error($conection));
+                                    $raw_results4 = mysqli_query($conection, "SELECT * FROM seguros WHERE estatus = 1;") or die(mysqli_error($conection));
                                     while ($results = mysqli_fetch_array($raw_results4)) {
                                     ?>
 

@@ -85,6 +85,7 @@ $monto            = 0;
 $porcentajeDiax   = 0;
 $porcentajeDoctor = 0;
 $diferencia       = 0;
+$pagoDiferido     = 0;
 ob_start();
 ?>
 <!DOCTYPE html>
@@ -136,8 +137,14 @@ ob_start();
                 while ($data =  mysqli_fetch_array($sql_reporte)) {
                   $descuento       += $data['descuento'];
                   $monto           += $data['monto'];
+                  $pagoDiferido     = $data['pago_diferido'];
 
-                  $totalIngresado   = $monto - $descuento;
+                  if($data['pago_diferido'] == 0){
+                    echo $totalIngresado   = $monto - $descuento;
+                  }else{
+                    echo $totalIngresado   = $monto - $descuento + 10000;
+                  }
+                  
                   $diferencia       = $totalIngresado - $totalBio;
                   $porcentajeDiax   = $diferencia * 0.3;
                   $porcentajeDoctor = $diferencia * 0.7;
@@ -145,24 +152,30 @@ ob_start();
                   
                 ?>
                   <tr>
-                    <td><?php echo date_format($data['created_at'], 'H:i:s'); ?></td>
+                    <td><?php echo $data['created_at']; ?></td>
                     <td><?php echo number_format($data['ruc'], 0, '.', '.'); ?></td>
                     <td><?php echo $data['razon_social']; ?></td>
                     <td><?php echo $data['estudio']; ?></td>
-                    <?php if ($data['monto'] == 0 || $data['pago_diferido'] == 0) { ?>
+                    <?php if($data['pago_diferido'] == 0){  ?>
+                      <?php if($data['monto'] == 0){  ?>
+                        <td><?php echo 0; ?></td>
+                      <?php }else{?>
+                        <td><?php echo number_format($data['monto'] - 10000, 0, '.', '.'); ?></td>
+                      <?php }?>
+                    <?php }else{?>
                       <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
-                    <?php } else { ?>
-                      <td><?php echo number_format($data['monto'] -10000, 0, '.', '.'); ?></td>
-                    <?php } ?>
+                    <?php }?>
                     <td><?php echo number_format($data['monto_seguro'], 0, '.', '.'); ?></td>
                     <td><?php echo number_format($data['descuento'], 0, '.', '.'); ?></td>
-                    <?php if($data['descuento'] >= $data['monto']){?>
-                    <td><?php echo 0; ?></td>
-                    <?php } else if($data['pago_diferido'] == 0){ ?>
-                      <td><?php echo number_format($data['monto'] - $data['descuento'] -10000, 0, '.', '.'); ?></td>
-                      <?php }else{  ?>
-                        <td><?php echo number_format($data['monto'] - $data['descuento'], 0, '.', '.'); ?></td>
-                      <?php }  ?>
+                    <?php if($data['pago_diferido'] == 0){  ?>
+                      <?php if($data['monto'] == 0){  ?>
+                        <td><?php echo 0; ?></td>
+                      <?php }else{?>
+                        <td><?php echo number_format($data['monto'] - $data['descuento'] - 10000, 0, '.', '.'); ?></td>
+                      <?php }?>
+                    <?php }else{?>
+                      <td><?php echo number_format($data['monto'] - $data['descuento'], 0, '.', '.'); ?></td>
+                    <?php }?>
                     <td><?php echo $data['forma_pago']; ?></td>
                     <td><?php echo $data['seguro']; ?></td>
                   </tr>
@@ -177,12 +190,14 @@ ob_start();
                 <p>Ingreso Total :</p>
                 <p style="text-align: right;" class="alert alert-danger"> 
                 <?php 
-                if($data['pago_diferido'] == 0){
-                  echo number_format(($totalIngresado - $totalBio) + 10000, 0, '.', '.');
+                if($pagoDiferido == 1){
+                  echo number_format($totalIngresado - $totalBio + 10000, 0, '.', '.');
                 }else{
-
-                  echo number_format($totalIngresado - $totalBio, 0, '.', '.'); 
+                  echo number_format($totalIngresado - $totalBio, 0, '.', '.');
                 }
+
+                  
+                
                 ?>.<b>GS</b></p>
               <?php } else { ?>
                 <table class="table table-striped text-center">

@@ -29,7 +29,8 @@
             $nro_radiografias = $data['nro_radiografias'];
             $condicion_venta  = $data['condicion_venta'];
           }
-          $pago = $monto - $monto_2;
+          $pago = (int)$monto - (int)$monto_2;
+          $pago_diferido = 1; 
             
 
         if(!empty($forma_pago_id_2)){

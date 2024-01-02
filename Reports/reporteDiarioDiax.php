@@ -59,6 +59,28 @@ WHERE $where  AND dc.forma_pago_id = 2 GROUP BY c.id");
 
 $resultado_post = mysqli_num_rows($sql_post);
 
+
+
+$post_paz = mysqli_query($conection,"SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
+fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
+IF(c.estatus = 1, dc.monto, 0) as monto,
+IF(c.estatus = 1, dc.descuento, 0) as descuento
+FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
+INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
+INNER JOIN seguros s ON s.id = dc.seguro_id
+WHERE c.created_at BETWEEN '$f_de' AND '$f_a' AND m.nombre LIKE '%PAZ%'   AND dc.forma_pago_id = 2 GROUP BY c.id");
+
+$resultado_posPaz = mysqli_num_rows($post_paz);
+
+$monto    = 0;
+$montoPOS = 0;
+while($data = mysqli_fetch_array($post_paz)){
+  $monto =  $data['monto'];
+}
+$montoPOS += $monto -10000;
+
+
+
 $sql_transferencia = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
 fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
 IF(c.estatus = 1, dc.monto, 0) as monto,
@@ -236,7 +258,7 @@ ob_start();
               </tbody>
             </table>
             <section>
-              <?php if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 3 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){?>
+              <?php if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 3 || $doctor_id == 4|| $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){?>
                 <p>Ingreso Total :</p>
                 <p style="text-align: right;" class="alert alert-danger"> <?php echo number_format($totalEfectivo - $descuento, 0, '.', '.'); ?>.<b>GS</b></p>
                 <p>Total Bio Paz Efectivo</p>
@@ -258,7 +280,6 @@ ob_start();
                   </tr>
                 </tbody>
               </table>
-              <hr>
               <table class="table table-striped text-center">
               <thead>
                 <th>Cantidad Bio Paz</th>
@@ -273,7 +294,7 @@ ob_start();
                 </tr>
               </tbody>
             </table>
-              <table class="table table-striped text-center">
+              <table class="table table-striped">
               <thead>
                 <th></th>
                 <th></th>
@@ -281,12 +302,43 @@ ob_start();
               </thead>
               <tbody>
                 <tr>
-                  <td>Monto Total</td>
+                  <td>Monto Total Efectivo</td>
                   <td></td>
-                  <td><?php echo number_format(($cantidadPaz * 10000) + $totalEfectivo,0,'.','.'); ?></td>
+                  <td><?php echo number_format((($cantidadPaz * 10000) + $totalEfectivo),0,'.','.'); ?></td>
                 </tr>
               </tbody>
             </table>
+                <table class="table table-striped">
+                <thead>
+                <th></th>
+                <th></th>
+                <th></th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Monto total POS</td>
+                    <td></td>
+                    <td></td>
+                    <td><?php echo number_format($montoPOS,0,'.','.'); ?></td>
+                  </tr>
+                </tbody>
+              </table>
+                <table class="table table-striped">
+                <thead>
+                <th></th>
+                <th></th>
+                <th></th>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Diferencia</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><?php echo number_format((($cantidadPaz * 10000) + $totalEfectivo) - $montoPOS,0,'.','.'); ?></td>
+                  </tr>
+                </tbody>
+              </table>
               <?php }?>
             </section>
           </div>
