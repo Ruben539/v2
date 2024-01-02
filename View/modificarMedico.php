@@ -41,6 +41,10 @@ require_once('../Controllers/modificarMedico.php');
                   <label for="fecha_nac">Fecha Nacimiento</label>
                   <input type="text" class="form-control" id="fecha_nac" name="fecha_nac" value="<?php echo $fecha_nac;?>">
                 </div>
+                <div class="form-group">
+                  <label for="monto_cobro">Monto a Cobrar</label>
+                  <input type="text" class="form-control" id="monto_cobro" name="monto_cobro" value="<?php echo $monto_cobro;?>">
+                </div>
 
                 <button type="submit" class="btn btn-primary mr-2">Actualizar</button>
                 <a class="btn btn-light" href="../Templates/medicos.php">Cancelar</a>

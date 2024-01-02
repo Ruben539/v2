@@ -16,6 +16,7 @@ if (!empty($_POST)) {
 		$usuario         = $_POST['usuario'];
 		$telefono        = $_POST['telefono'];
 		$fecha_nac       = $_POST['fecha_nac'];
+		$monto_cobro     = $_POST['monto_cobro'];
 
 
 		//echo "SELECT * FROM usuario
@@ -36,14 +37,14 @@ if (!empty($_POST)) {
 	} else {
 
 		$sql_update = mysqli_query($conection, "UPDATE medicos SET cedula = '$cedula',nombre = '$nombre',usuario = '$usuario', correo = '$correo'
-		,telefono = '$telefono',fecha_nac = '$fecha_nac'
+		,telefono = '$telefono',fecha_nac = '$fecha_nac',monto_cobro = '$monto_cobro'
 				WHERE id = $id");
 
 		if ($sql_update) {
 
-			echo $alert = '<p class = "msg_success">Actualizado Correctamente</p>';
+			 $alert = '<p class = "msg_success">Actualizado Correctamente</p>';
 		} else {
-			echo $alert = '<p class = "msg_error">Error al Actualizar el Registro</p>';
+			 $alert = '<p class = "msg_error">Error al Actualizar el Registro</p>';
 		}
 	}
 }
@@ -59,7 +60,7 @@ if (empty($_REQUEST['id'])) {
 
 $id = $_REQUEST['id'];
 
-$sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.usuario,m.correo,m.telefono,m.fecha_nac
+$sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.usuario,m.correo,m.telefono,m.fecha_nac,monto_cobro
 FROM medicos m  where m.id = $id AND m.estatus = 1");
 
 //mysqli_close($conection);//con esto cerramos la conexion a la base de datos una vez conectado arriba con el conexion.php
@@ -80,5 +81,6 @@ if ($resultado == 0) {
 		$usuario      = $data['usuario'];
 		$telefono     = $data['telefono'];
 		$fecha_nac    = $data['fecha_nac'];
+		$monto_cobro  = $data['monto_cobro'];
 	}
 }

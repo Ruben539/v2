@@ -33,6 +33,7 @@ require_once('../Models/conexion.php');
                                         <th>Correo</th>
                                         <th>Telefono</th>
                                         <th>Fecha de Nacimiento</th>
+                                        <th>Monto a Cobrar</th>
                                         <th>Editar</th>
                                         <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  ) { ?>
                                             <th>Agregar</th>
@@ -48,7 +49,7 @@ require_once('../Models/conexion.php');
                                 <tbody>
                                     <?php
                                  if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
-                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.correo,m.telefono,m.fecha_nac,m.usuario FROM medicos m 
+                                    $sql = mysqli_query($conection, "SELECT m.id,m.nombre,m.cedula,m.correo,m.telefono,m.fecha_nac,m.monto_cobro,m.usuario FROM medicos m 
                                             WHERE m.estatus = 1 ORDER BY  m.id DESC");
                                             
                                   } else if ($_SESSION['rol'] == 5) {
@@ -71,6 +72,7 @@ require_once('../Models/conexion.php');
                                                 <td><?php echo $data['correo']; ?></td>
                                                 <td><?php echo $data['telefono']; ?></td>
                                                 <td><?php echo $data['fecha_nac'] ?></td>
+                                                <td><?php echo number_format($data['monto_cobro'],0,'.','.') ?></td>
                                 
 
                                                 <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2  || $_SESSION['rol'] == 3|| $_SESSION['rol'] == 5) { ?>
