@@ -56,6 +56,7 @@ if ($query_comprobante) {
   $cobertura       = $_POST['cobertura'];
   $nro_rayos       = $_POST['nro_rayos'];
   $comprobante_id  = $id;
+  $categoria       = 0;
   
 
  
@@ -65,39 +66,44 @@ if ($query_comprobante) {
   for ($i = 0; $i < count($estudios); $i++) {
 
     if($seguro_id == 13){
-      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, preferencial FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
+      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, preferencial,categoria_id FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
       while ($results = mysqli_fetch_array($raw_results2)) {
         $id = $results['id'];
         $descripcion = $results['nombre'];
         $monto = $results['preferencial'];
+        $categoria = $results['categoria_id'];
       }
 
     }else if($seguro_id != 13 && $seguro_id != 17){
-      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, seguro FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
+      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, seguro,categoria_id FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
       while ($results = mysqli_fetch_array($raw_results2)) {
         $id = $results['id'];
         $descripcion = $results['nombre'];
         $monto = $results['seguro'];
+        $categoria = $results['categoria_id'];
       }
     }else if($seguro_id == 17){
-      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, hospitalario FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
+      $raw_results2 = mysqli_query($conection, "SELECT id, nombre, hospitalario,categoria_id FROM estudios WHERE id='" .$estudios[$i]. "'") or die(mysqli_error($conection));
       while ($results = mysqli_fetch_array($raw_results2)) {
         $id = $results['id'];
         $descripcion = $results['nombre'];
         $monto = $results['hospitalario'];
+        $categoria = $results['categoria_id'];
       }
     }
   
     
+    
 
     if($cobertura == 1){
-
       if($seguro_id == 13){
         $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,cobertura,seguro_id,descuento,descripcion,nro_radiografias,condicion_venta) 
         VALUES('$comprobante_id','$id','$monto','$cobertura','$seguro_id','$descuento','$descripcion','$nro_rayos','contado')");
+
       }else if($seguro_id != 13 && $seguro_id != 17){
         $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,cobertura,seguro_id,descuento,descripcion,nro_radiografias,condicion_venta) 
         VALUES('$comprobante_id','$id','$monto','$cobertura','$seguro_id','$descuento','$descripcion','$nro_rayos','contado')");
+
       }else if($seguro_id == 17){
         $quey_detalle = mysqli_query($conection, "INSERT INTO detalle_comprobantes(comprobante_id,estudio_id,monto,cobertura,seguro_id,descuento,descripcion,nro_radiografias,condicion_venta) 
         VALUES('$comprobante_id','$id','$monto','$cobertura','$seguro_id','$descuento','$descripcion','$nro_rayos','contado')");
