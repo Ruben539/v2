@@ -86,7 +86,7 @@
 
 
                 $insert_consulta = mysqli_query($conection,"INSERT INTO consulta_medicos(ruc,razon_social,estudio_id,doctor_id,monto,monto_seguro,descuento,monto_cobrado,forma_pago_id,seguro_id)
-                VALUES('$ruc','$razon_social','$estudio_id','$montoConsulta','$monto','$monto_seguro','$descuento','$montoCobrado','$forma_pago_id','$seguro_id')");
+                VALUES('$ruc','$razon_social','$estudio_id','$doctor_id','$montoConsulta','$monto_seguro','$descuento','$montoCobrado','$forma_pago_id','$seguro_id')");
 
             }else if($categoria == 2){
 

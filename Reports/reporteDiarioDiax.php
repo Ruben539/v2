@@ -47,7 +47,6 @@ WHERE $where  AND dc.forma_pago_id = 1 GROUP BY c.id");
 $resultado_efectivo = mysqli_num_rows($sql_efectivo);
 
 
-
 $sql_post = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
 fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
 IF(c.estatus = 1, dc.monto, 0) as monto,
@@ -60,7 +59,7 @@ WHERE $where  AND dc.forma_pago_id = 2 GROUP BY c.id");
 $resultado_post = mysqli_num_rows($sql_post);
 
 
-
+//TODO: query para obtener la cantidad de pago por pos en PAZ.
 $post_paz = mysqli_query($conection,"SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
 fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
 IF(c.estatus = 1, dc.monto, 0) as monto,
@@ -78,7 +77,6 @@ while($data = mysqli_fetch_array($post_paz)){
   $monto =  $data['monto'];
 }
 $montoPOS += $monto -10000;
-
 
 
 $sql_transferencia = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
