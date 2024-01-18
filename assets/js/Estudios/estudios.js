@@ -48,6 +48,48 @@ function EliminarEstudio(id){
 }
 
 
+function asignarMonto(datos){
+	console.log(datos)
+	d = datos.split('||');
+	
+	$('#id').val(d[0]);
+	$('#monto').val(d[6]);
+		
+}
+
+function confirmacionMontoAsignado(){
+
+	id=$('#id').val();
+	monto=$('#monto').val();
+	
+
+	cadena = "id=" + id +
+	"&monto=" + monto;
+	$.ajax({
+		type:"POST",
+		url:"../Helpers/AsignarMontoEstudio.php",
+		data:cadena,
+		success: function(r){
+			if(r == 1){
+				Swal.fire({
+					type: 'success',                          
+					title: 'Agregado con exito!'
+				}).then((result) => {
+					if (result.value) {
+						window.location.href = "../Templates/estudios.php";                          
+					}
+				})
+
+			}else{
+				Swal.fire({
+					type: 'error',
+					title: 'Error al Agregar',                          
+				});
+			}
+		}
+	});
+}
+
 
 
 

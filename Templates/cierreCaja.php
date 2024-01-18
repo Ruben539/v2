@@ -327,9 +327,9 @@ if ($resultado == 0) {
                                 if ($resultado > 0) {
                                     while ($data = mysqli_fetch_array($sql)) {
                                         $row++;
-                                        $precio 
+                                        $precio = $data['monto'];
 
-                                    if ($data['estudio'] == 'Radiografias') {
+                                    if($data['estudio']) {
                                             $monto = $precio * $data['nro_radiografias'];
                                     } else if ($data['estudio'] != 'Radiografias') {
                                             $monto =  $precio;

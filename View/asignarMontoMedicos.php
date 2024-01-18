@@ -17,27 +17,7 @@ require_once('../Controllers/asignarMontoEstudioMedicos.php');
                             </p>
                             <form class="forms-sample" method="POST" action="">
                                 <div class="form-group">
-                                    <label class="control-label">Medico</label>
-                                    <select class="chosen form-control" name="doctor_id" id="doctor_id" required data-placeholder="Seleccione un Medico">
-                                        <option value=""></option>
-                                        <?php
-                                        $raw_results4 = mysqli_query($conection, "SELECT * FROM medicos WHERE estatus = 1;") or die(mysqli_error($conection));
-                                        while ($results = mysqli_fetch_array($raw_results4)) {
-                                        ?>
-
-                                            <option value=" <?php echo $results['id'] ?> ">
-                                                <?php echo $results['nombre']; ?>
-                                            </option>
-
-                                        <?php
-                                        }
-                                        ?>
-                                    </select>
-
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="control-label">estudio</label>
+                                    <label class="control-label">Estudio</label>
                                     <select class="chosen form-control" name="estudio_id" id="estudio_id" required data-placeholder="Seleccione la estudio">
                                         <option value=""></option>
                                         <?php

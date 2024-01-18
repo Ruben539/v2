@@ -126,25 +126,45 @@ $resultado = mysqli_num_rows($query_comprobantes);
             <div class="collapse" id="cierre">
               <ul class="nav flex-column sub-menu">
                 <li class="nav-item"> <a class="nav-link" href="../Templates/cierreCaja.php">Rendiciones</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/rendicionMensual.php">Rendicion Mensual</a></li>
+               
               </ul>
             </div>
           </li>
           <?php }?>
 
+         
+
           <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2){?>
-          <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <i class="typcn typcn-group menu-icon"></i>
-              <span class="menu-title">Usuarios</span>
-              <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="../Templates/usuarios.php">Usuarios Activos</a></li>
-                <li class="nav-item"> <a class="nav-link" href="../Templates/usuariosInactivos.php">Usuarios Inactivos</a></li>
-              </ul>
-            </div>
-          </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
+                <i class="typcn typcn-group menu-icon"></i>
+                <span class="menu-title">Usuarios</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="ui-basic">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="../Templates/usuarios.php">Usuarios Activos</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="../Templates/usuariosInactivos.php">Usuarios Inactivos</a></li>
+                </ul>
+              </div>
+            </li>
+          <?php }?>
+
+          <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2){?>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#ui-report" aria-expanded="false" aria-controls="ui-report">
+                <i class="typcn typcn-group menu-icon"></i>
+                <span class="menu-title">Reportes</span>
+                <i class="menu-arrow"></i>
+              </a>
+              <div class="collapse" id="ui-report">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item"> <a class="nav-link" href="../Templates/reporteConsultaMedicos.php">Consultas Medicos</a></li>
+                  <li class="nav-item"> <a class="nav-link" href="../Templates/reporteServicioMedicos.php">Servicios Medicos</a></li>
+                </ul>
+              </div>
+            </li>
           <?php }?>
 
           <?php if($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2){?>

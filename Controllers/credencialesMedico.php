@@ -27,11 +27,9 @@ if (!empty($_POST)) {
 		$resultado = mysqli_fetch_array($query);
 	}
 
-	if ($resultado > 0) {
-		$alert = '<p class = "msg_error">El Registro ya existe,ingrese otro</p>';
-	} else {
+	
 
-		$sql_update = mysqli_query($conection, "UPDATE medicos SET usuario = '$usuario',pass = '$pass', estatus = 1
+		$sql_update = mysqli_query($conection, "UPDATE medicos SET usuario = '$usuario',pass = '$pass'
 				WHERE id = $id");
 
 		if ($sql_update) {
@@ -40,7 +38,7 @@ if (!empty($_POST)) {
 		} else {
 			echo $alert = '<p class = "msg_error">Error al Actualizar el Registro</p>';
 		}
-	}
+	
 }
 
 //Recuperacion de datos para mostrar al seleccionar Actualizar

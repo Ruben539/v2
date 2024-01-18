@@ -34,7 +34,7 @@ require_once('../Models/conexion.php');
                                     <input type="date" name="fecha_hasta" id="fecha_hasta" class="form-control">
                                 </div>
                             </div>
-                           
+
 
                             <div class="col-md-12">
                                 <label for=""></label>
@@ -56,8 +56,9 @@ require_once('../Models/conexion.php');
                                             while ($estudio = mysqli_fetch_array($query_estudio)) {
 
                                         ?>
+                                                <option value="">Seleccione un estudio</option>
                                                 <option value="<?php echo $estudio["id"]; ?>"><?php echo
-                                                $estudio["nombre"] ?></option>
+                                                    $estudio["nombre"] ?></option>
 
                                         <?php
 
@@ -71,7 +72,7 @@ require_once('../Models/conexion.php');
                                 <label for=""></label>
                             </div>
 
-                                    
+
                             <div>
 
                                 <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-search"></i>Filtrar
@@ -84,7 +85,7 @@ require_once('../Models/conexion.php');
                         <div class="col-md-12">
                             <div class="tile">
                                 <div class="table-responsive">
-                                    <table id="tabla" class="table table-striped table-bordered table-condensed" style="width:100%">
+                                    <table id="tablaResultado" class="table table-striped table-bordered table-condensed" style="width:100%">
 
                                     </table>
                                 </div>
@@ -132,6 +133,36 @@ require_once('../Models/conexion.php');
                     }
 
                 });
+
+            });
+        </script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                tabla = $("#tablaResultado").DataTable({
+                    "columnDefs": [{
+                        "target": 1,
+                        "data": null
+                    }],
+
+                    //Para cambiar el lenguaje a español
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+                        "sSearch": "Buscar:",
+                        "oPaginate": {
+                            "sFirst": "1",
+                            "sLast": ">>",
+                            "sNext": ">",
+                            "sPrevious": "<"
+                        },
+                        "sProcessing": "Procesando...",
+                    }
+                });
+
+
 
             });
         </script>

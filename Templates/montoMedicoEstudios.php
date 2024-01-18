@@ -35,10 +35,6 @@ require_once('../Models/conexion.php');
 
                                         <th>
 
-                                            Medico
-                                        </th>
-                                        <th>
-
                                             Estudio
                                         </th>
                                         <th>
@@ -56,10 +52,9 @@ require_once('../Models/conexion.php');
                                 <tbody>
                                     <?php
 
-                                    $sql = mysqli_query($conection, "SELECT pem.id, m.nombre  AS medico, e.nombre As estudio, pem.monto
+                                    $sql = mysqli_query($conection, "SELECT pem.id, e.nombre As estudio, pem.monto
                                     FROM pago_estudio_medicos pem INNER JOIN estudios e ON e.id =  pem.estudio_id
-                                    INNER JOIN medicos m ON m.id = pem.doctor_id
-                                    WHERE pem.estatus = 1 AND e.estatus = 1 AND m.estatus = 1");
+                                    WHERE pem.estatus = 1 AND e.estatus = 1 ");
 
                                     $resultado = mysqli_num_rows($sql);
 
@@ -68,7 +63,6 @@ require_once('../Models/conexion.php');
                                     ?>
                                             <tr>
                                                 <td><?php echo $data['id']; ?></td>
-                                                <td><?php echo $data['medico']; ?></td>
                                                 <td><?php echo $data['estudio']; ?></td>
                                                 <td><?php echo number_format($data['monto'],0,'.','.'); ?></td>
                                                 <?php if ($_SESSION['rol'] == 1 ) { ?>

@@ -10,7 +10,7 @@ if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3) {
 }
 
 require_once('../Models/conexion.php');
-
+require_once('../Modals/modalAsignarMonto.php');
 ?>
 
 
@@ -33,38 +33,44 @@ require_once('../Models/conexion.php');
                                         <th>Normal</th>
                                         <th>Hospitalario</th>
                                         <th>Categoria</th>
+                                        <th>Pago Estudio</th>
                                         <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2 || $_SESSION['rol'] == 3 || $_SESSION['rol'] == 5 ) { ?>
                                             <th>Editar</th>
                                             <th>Eliminar</th>
+                                            <th>Asignar</th>
                                         <?php } ?>
                                     </tr>
                                 </thead>
 
                                 <tbody>
                                     <?php
-                                    $sql = mysqli_query($conection, "SELECT e.id,e.nombre,e.seguro,e.preferencial,e.hospitalario,ce.descripcion
-                                     FROM estudios e INNER JOIN categoria_estudio ce ON ce.id = e.categoria_id WHERE e.estatus = 1 ORDER BY e.id DESC");
+                                    $sql = mysqli_query($conection, "SELECT e.id,e.nombre,e.seguro,e.preferencial,e.hospitalario,ce.descripcion,pem.monto
+                                    FROM estudios e INNER JOIN categoria_estudio ce ON ce.id = e.categoria_id
+                                    LEFT JOIN pago_estudio_medicos pem ON pem.estudio_id = e.id 
+                                    WHERE e.estatus = 1 ORDER BY e.id DESC");
 
                                     $resultado = mysqli_num_rows($sql);
 
                                     if ($resultado > 0) {
                                         while ($ver = mysqli_fetch_array($sql)) {
-                                            $datos = $ver[0];
-                                            $ver[1];
-                                            $ver[2];
-                                            $ver[3];
-                                            $ver[4];
-                                            $ver[5];
+                                            $datos = $ver[0]."||".
+                                            $ver[1]."||".
+                                            $ver[2]."||".
+                                            $ver[3]."||".
+                                            $ver[4]."||".
+                                            $ver[5]."||".
+                                            $ver[6];
 
                                     ?>
                                             <tr class="text-center">
 
                                                 <td><?= $ver[0]; ?></td>
                                                 <td><?= $ver[1]; ?></td>
-                                                <td><?= $ver[2]; ?></td>
-                                                <td><?= $ver[3]; ?></td>
-                                                <td><?= $ver[4]; ?></td>
+                                                <td><?= number_format($ver[2],0,'.','.'); ?></td>
+                                                <td><?= number_format($ver[3],0,'.','.'); ?></td>
+                                                <td><?= number_format($ver[4],0,'.','.'); ?></td>
                                                 <td><?= $ver[5]; ?></td>
+                                                <td><?= number_format($ver[6],0,'.','.'); ?></td>
                                                 <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
                                                     <td>
                                                         <a href="../View/modificarEstudios.php?id=<?php echo $ver[0]; ?>" class="btn btn-outline-info" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-edit"></i></a>
@@ -87,6 +93,14 @@ require_once('../Models/conexion.php');
                                                 <?php if ($_SESSION['rol'] == 3 || $_SESSION['rol'] == 5) { ?>
                                                     <td>
                                                         <a href="#" onclick="permisoEliminar()" class="btn btn-outline-danger" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);"><i class="typcn typcn-trash"></i></a>
+                                                    </td>
+                                                <?php } ?>
+
+                                                <?php if ($_SESSION['rol'] == 1 || $_SESSION['rol'] == 2) { ?>
+                                                    <td>
+                                                        <button href="#" data-toggle="modal" data-target="#modalEditar"  onclick="asignarMonto('<?php echo $datos; ?>')" class="btn btn-outline-warning" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3), 0 6px 20px  rgba(0, 0, 0, 0.25);">
+                                                             <i class="typcn typcn-credit-card"></i>
+                                                        </button>
                                                     </td>
                                                 <?php } ?>
                                             </tr>
@@ -115,6 +129,11 @@ require_once('../Models/conexion.php');
                     $('#btnEditarPass').click(function() {
                         /* Act on the event */
                         EliminarEstudio();
+                    });
+
+                    $('#btnAsignarMonto').click(function() {
+                        /* Act on the event */
+                        confirmacionMontoAsignado();
                     });
                 });
             </script>
