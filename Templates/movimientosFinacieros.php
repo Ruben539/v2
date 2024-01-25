@@ -37,6 +37,20 @@ if (empty($_POST['fecha_desde']) && empty($_POST['fecha_hasta'])) {
 $resultado = mysqli_num_rows($sql);
 
 require_once('../Modals/modalImageComprobante.php');
+$query = mysqli_query($conection, "SELECT id,monto FROM caja_chica  WHERE estatus = 1 ");
+
+$resultado = mysqli_num_rows($query);
+
+
+if ($resultado > 0) {
+
+    $total     = 0;
+
+    while($data  = mysqli_fetch_array($query)){
+        $id         = $data['id'];
+        $montoCaja  = $data['monto'];
+    }
+}
 ?>
 
 
@@ -46,8 +60,13 @@ require_once('../Modals/modalImageComprobante.php');
             <div class="col-lg-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body">
-                        <h4>Movimientos Financieros <a href="../View/agregarMovientos.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> Registrar</a></h4>
+                        <h4 >Movimientos Financieros <a href="../View/agregarMovientos.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> 
+                        Registrar</a>
+                        <a href="../View/agregarCajaChica.php" class="btn btn-outline-success"><i class="typcn typcn-archive"></i></a>
+                        <a>Monto Caja: <span><?= number_format($montoCaja,0,'.','.');?> GS</span></a>
 
+                        </h4>
+                        
                         <form class="row" method="POST" id='formFechas' name='formFechas'>
                             <div class="col-md-5">
                                 <div class="widget-small">

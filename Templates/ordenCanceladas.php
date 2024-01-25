@@ -29,6 +29,7 @@ require_once('../Models/conexion.php');
                                     <tr>
                                         <th class="ml-5">Nro</th>
                                         <th>Ruc </th>
+                                        <th>Nro Ticket </th>
                                         <th>Razon Social</th>
                                         <th>Estudio</th>
                                         <th>Monto</th>
@@ -38,7 +39,6 @@ require_once('../Models/conexion.php');
                                         <th>Seguro</th>
                                         <th>Comentario</th>
                                         <th>Fecha</th>
-                                        <th>Anular</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -47,7 +47,10 @@ require_once('../Models/conexion.php');
                                     $fecha =  date('m-Y');
                                     //  echo $fecha1." ".$fecha2;
                                     //  exit;
-                                    $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio, SUM(dc.monto) as monto,dc.descuento, m.nombre as doctor, fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at
+                                    $sql = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
+                                    fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
+                                    IF(c.estatus = 1, dc.monto, 0) as monto,
+                                    IF(c.estatus = 1, dc.descuento, 0) as descuento
                                     FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
                                     INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
                                     INNER JOIN seguros s ON s.id = dc.seguro_id
@@ -65,6 +68,7 @@ require_once('../Models/conexion.php');
 
 
                                                 <td><?php echo $nro ?></td>
+                                                <td><?php echo $data['id'] ?></td>
                                                 <td><?php echo $data['ruc']; ?></td>
                                                 <td><?php echo $data['razon_social']; ?></td>
                                                 <td><?php echo $data['estudio']; ?></td>

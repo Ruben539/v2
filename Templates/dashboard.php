@@ -155,9 +155,7 @@ require_once("../includes/header_admin.php");
              
                   if ($resultado > 0) {
                   while ($data = mysqli_fetch_array($sql)) {
-                    for($i = 0; $i < count($data['estudio_id']); $i++){
-                      $data['estudio_id'][$i];
-                    }
+                   
 
                     $precio = $data['monto'];
                     $descuento += (int)$data['descuento'];

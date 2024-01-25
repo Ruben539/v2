@@ -134,17 +134,20 @@ if ($resultado == 0) {
                                     <th>Nro</th>
                                     <th>Nombre del Medico</th>
                                     <th>Cantidad de Paciente</th>
+                                    <th>Monto a Cobrar</th>
+                                    <th>Estado</th>
+                                    <th>Pagar</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 date_default_timezone_set('America/Asuncion');
                                 $fecha  =  date('Y-m-d');
-                                $sql = mysqli_query($conection, "SELECT COUNT(DISTINCT(c.id)) AS cantidad, m.nombre 
-                                FROM comprobantes c INNER JOIN detalle_comprobantes dc ON dc.comprobante_id = c.id
-                                INNER JOIN medicos m ON m.id = c.doctor_id 
-                                WHERE  c.id IN (SELECT comprobante_id FROM detalle_comprobantes) 
-                                AND m.nombre LIKE '%PAZ%' AND c.created_at LIKE '%" . $fecha . "%' AND c.estatus = 1 GROUP BY m.nombre ORDER BY cantidad DESC");
+                                $sql = mysqli_query($conection, "SELECT m.nombre AS medico, COUNT(DISTINCT(cm.id)) AS cantidad, SUM(cm.monto_cobrado) AS monto, ed.descripcion AS estado
+                                FROM consulta_medicos cm INNER JOIN estudios e ON e.id = cm.estudio_id
+                                INNER JOIN medicos m ON m.id = cm.doctor_id INNER JOIN forma_pagos fp ON fp.id = cm.forma_pago_id
+                                INNER JOIN estado_deuda ed ON ed.id = cm.estado_deuda_id
+                                WHERE m.nombre LIKE '%PAZ%' AND cm.created_at LIKE '%" . $fecha . "%' AND cm.estado_deuda_id = 1 AND cm.estatus = 1 GROUP BY m.nombre ORDER BY cantidad DESC");
 
                                 $resultado = mysqli_num_rows($sql);
                                 $row = 0;
@@ -155,8 +158,13 @@ if ($resultado == 0) {
                                         <tr class="text-center">
 
                                             <td><?php echo $row; ?></td>
-                                            <td><?php echo $data['nombre']; ?></td>
+                                            <td><?php echo $data['medico']; ?></td>
                                             <td><?php echo $data['cantidad']; ?></td>
+                                            <td><?php echo number_format($data['monto'],0,'.','.'); ?></td>
+                                            <td><?php echo $data['estado']; ?></td>
+                                            <td>
+                                                <button class="btn btn-success">Pagar</button>
+                                            </td>
 
                                         </tr>
 
@@ -186,17 +194,19 @@ if ($resultado == 0) {
                                     <th>Nro</th>
                                     <th>Nombre del Medico</th>
                                     <th>Cantidad de Paciente</th>
+                                    <th>Monto a Cobrar</th>
+                                    <th>Estado</th>
+                                    <th>Pagar</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                 date_default_timezone_set('America/Asuncion');
                                 $fecha  =  date('Y-m-d');
-                                $sql = mysqli_query($conection, "SELECT COUNT(DISTINCT(c.id)) AS cantidad, m.nombre 
-                                FROM comprobantes c INNER JOIN detalle_comprobantes dc ON dc.comprobante_id = c.id
-                                INNER JOIN medicos m ON m.id = c.doctor_id 
-                                WHERE  c.id IN (SELECT comprobante_id FROM detalle_comprobantes) 
-                                AND m.nombre LIKE '%DIAX%' AND c.created_at LIKE '%" . $fecha . "%' AND c.estatus = 1 GROUP BY m.nombre ORDER BY cantidad DESC");
+                                $sql = mysqli_query($conection, "SELECT m.nombre AS medico, COUNT(DISTINCT(sm.id)) AS cantidad, SUM(sm.monto_doctor) AS monto,ed.descripcion AS estado
+                                FROM servicio_medicos sm INNER JOIN estudios e ON e.id = sm.estudio_id
+                                INNER JOIN medicos m ON m.id = sm.doctor_id INNER JOIN estado_deuda ed ON ed.id = sm.estado_deuda_id
+                                WHERE m.nombre LIKE '%DIAX%' AND cm.created_at LIKE '%" . $fecha . "%' AND sm.estado_deuda_id = 1 AND sm.estatus = 1 GROUP BY m.nombre ORDER BY cantidad DESC");
 
                                 $resultado = mysqli_num_rows($sql);
                                 $row = 0;
@@ -206,9 +216,14 @@ if ($resultado == 0) {
                                 ?>
                                         <tr class="text-center">
 
-                                            <td><?php echo $row; ?></td>
-                                            <td><?php echo $data['nombre']; ?></td>
+                                        <td><?php echo $row; ?></td>
+                                            <td><?php echo $data['medico']; ?></td>
                                             <td><?php echo $data['cantidad']; ?></td>
+                                            <td><?php echo number_format($data['monto'],0,'.','.'); ?></td>
+                                            <td><?php echo $data['estado']; ?></td>
+                                            <td>
+                                                <button class="btn btn-success">Pagar</button>
+                                            </td>
 
                                         </tr>
 
@@ -313,35 +328,34 @@ if ($resultado == 0) {
                                 date_default_timezone_set('America/Asuncion');
                                 $fecha  =  date('Y-m-d');
 
-                                $sql = mysqli_query($conection, "SELECT SUM(dc.monto) - dc.descuento, AS monto, dc.monto_seguro  FROM comprobantes c 
-                                INNER JOIN medicos m ON m.id = c.doctor_id 
-                                INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
-                                where c.created_at LIKE '%$fecha%' AND m.nombre like '%DIAX%' AND c.estatus = 1");
-
+                                $sql = mysqli_query($conection, "SELECT f.descripcion, COUNT(dc.forma_pago_id) AS cantidad, dc.monto,dc.monto_seguro
+                                FROM comprobantes c INNER JOIN detalle_comprobantes dc ON dc.comprobante_id = c.id
+                                INNER JOIN forma_pagos f ON f.id = dc.forma_pago_id
+                                INNER JOIN medicos m ON m.id = c.doctor_id
+                                WHERE m.nombre LIKE '%DIAX%' AND c.created_at  LIKE '%" . $fecha . "%' AND c.estatus = 1 
+                                GROUP BY f.descripcion ORDER BY cantidad DESC");
                                 $resultado = mysqli_num_rows($sql);
                                 $row = 0;
                                 $monto = 0;
                                 $montoSeguro = 0;
                                 $total = 0;
-                                $precio = 0;
                                 if ($resultado > 0) {
                                     while ($data = mysqli_fetch_array($sql)) {
                                         $row++;
-                                        $precio = $data['monto'];
-
-                                    if($data['estudio']) {
-                                            $monto = $precio * $data['nro_radiografias'];
-                                    } else if ($data['estudio'] != 'Radiografias') {
-                                            $monto =  $precio;
-                                    }
-                                       
+                                        $monto       = $data['monto'];
+                                        $montoSeguro = $data['monto_seguro'];
+                                        $total += $monto;
                                 ?>
                                         <tr class="text-center">
 
                                             <td><?php echo $row; ?></td>
-                                            
-                                            <td><?php echo $data['monto']; ?></td>
-                                        
+                                            <td><?php echo $data['descripcion']; ?></td>
+                                            <td><?php echo $data['cantidad']; ?></td>
+                                            <?php if($data['descripcion'] == 'Seguro'){?>
+                                            <td><?php echo number_format($montoSeguro, 0, '.', '.'); ?></td>
+                                            <?php }else{?>
+                                                <td><?php echo number_format($total, 0, '.', '.'); ?></td>
+                                            <?php } ?>
 
 
                                         </tr>
@@ -393,7 +407,7 @@ if ($resultado == 0) {
                                 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
                                 INNER JOIN medicos m ON m.id = c.doctor_id
                                 INNER JOIN seguros s ON s.id = dc.seguro_id
-                                WHERE m.nombre LIKE '%PAZ%'  AND c.created_at LIKE '%". $fecha."%' AND c.estatus = 1 GROUP BY c.id  ORDER BY  c.id ASC");
+                                WHERE m.nombre LIKE '%PAZ%'  AND c.created_at LIKE '%". $fecha."%' AND c.estatus = 3 GROUP BY c.id  ORDER BY  c.id ASC");
                 
                                 $resultado = mysqli_num_rows($sql);
                                 $paz = 0;

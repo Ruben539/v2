@@ -62,7 +62,7 @@ $resultado_post = mysqli_num_rows($sql_post);
 //TODO: query para obtener la cantidad de pago por pos en PAZ.
 $post_paz = mysqli_query($conection,"SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 
 fp.descripcion as forma_pago,s.descripcion as seguro,c.comentario, c.created_at,dc.monto_seguro,dc.nro_radiografias,c.estatus,
-IF(c.estatus = 1, dc.monto, 0) as monto,
+IF(c.estatus = 1, dc.monto - 10000, 0) as monto,
 IF(c.estatus = 1, dc.descuento, 0) as descuento
 FROM comprobantes c INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
 INNER JOIN medicos m ON m.id = c.doctor_id INNER JOIN forma_pagos fp ON fp.id = dc.forma_pago_id
@@ -74,9 +74,9 @@ $resultado_posPaz = mysqli_num_rows($post_paz);
 $monto    = 0;
 $montoPOS = 0;
 while($data = mysqli_fetch_array($post_paz)){
-  $monto =  $data['monto'];
+  $monto +=  $data['monto'];
 }
-$montoPOS += $monto -10000;
+$montoPOS = $monto;
 
 
 $sql_transferencia = mysqli_query($conection, "SELECT  c.id,c.ruc, c.razon_social,dc.descripcion as estudio,dc.descuento, m.nombre as doctor, 

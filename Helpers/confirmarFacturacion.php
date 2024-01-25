@@ -83,8 +83,8 @@ if (empty($forma_pago_id_2)) {
             }
 
 
-            $insert_consulta = mysqli_query($conection, "INSERT INTO consulta_medicos(ruc,razon_social,estudio_id,doctor_id,monto,monto_seguro,descuento,monto_cobrado,forma_pago_id,seguro_id)
-            VALUES('$ruc','$razon_social','$estudio_id','$doctor_id','$montoConsulta','$costo','$descuento','$montoCobrado','$forma_pago_id','$seguro_id')");
+            $insert_consulta = mysqli_query($conection, "INSERT INTO consulta_medicos(comprobante_id,ruc,razon_social,estudio_id,doctor_id,monto,monto_seguro,descuento,monto_cobrado,forma_pago_id,seguro_id)
+            VALUES('$id','$ruc','$razon_social','$estudio_id','$doctor_id','$montoConsulta','$costo','$descuento','$montoCobrado','$forma_pago_id','$seguro_id')");
 
             if ($insert_consulta) {
 
@@ -120,17 +120,121 @@ if (empty($forma_pago_id_2)) {
                     }
 
 
-                    $insert_servicio = mysqli_query($conection, "INSERT INTO servicio_medicos(doctor_id,estudio_id,monto,monto_diax,monto_doctor)
-                    VALUES('$doctor_id','$estudio_id','$total','$montoDiax','$montoDoctor')");
-                }
+                    $insert_servicio = mysqli_query($conection, "INSERT INTO servicio_medicos(comprobante_id,doctor_id,estudio_id,monto,monto_diax,monto_doctor)
+                    VALUES('$id','$doctor_id','$estudio_id','$total','$montoDiax','$montoDoctor')");
+                    
+                    //TODO: Linea de codigo para la insercion automatica en la tapa de depositos Diarios.
+                  
+
+                        //TODO: Validacion de los doctores por parte de paz la la BIO y el descuento de pagos por Tarjetas.
+                        if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 8 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){
+                            
+                            
+                                $fecha =  date('Y-m-d');
+                                $selectDeposito = mysqli_query($conection, "SELECT * FROM deposito_diarios WHERE fecha_deposito LIKE '%$fecha%'");
+
+                                $resultado =  mysqli_num_rows($selectDeposito);
+
+                               
+                                    while ($deposito = mysqli_fetch_array($selectDeposito)) {
+                                        $idDeposito  = $deposito['id'];
+                                        $montoDepo   = $deposito['monto'];
+                                    }
+
+                                    $total =  $montoDepo + 10000;
+
+                                    $upadteDeposito =  mysqli_query($conection, "UPDATE deposito_diarios SET monto = '$total' WHERE id = $idDeposito");
+                            
+                            
+                                if($upadteDeposito){
+
+                                    //TODO:Validamos si la forma de pago es tarjeta, para realizar la resta del efectivo ingresado por diax.
+                                    if($forma_pago_id == 2){
+                                                                                
+                                        $fecha =  date('Y-m-d');
+                                        $selectDeposito = mysqli_query($conection, "SELECT * FROM deposito_diarios WHERE fecha_deposito LIKE '%$fecha%'");
+                                        $resultado =  mysqli_num_rows($selectDeposito);
+
+                                        if($resultado > 0){
+                                            while ($deposito = mysqli_fetch_array($selectDeposito)) {
+                                                $idDeposito  = $deposito['id'];
+                                                $montoDepo   = $deposito['monto'];
+                                            }
+
+                                            $precio = 0;
+                                            $total  = 0;
+
+                                            if ($descripcion == 'Radiografias') {
+                                                $precio = $monto * $nro_radiografias;
+                                            } else {
+                                                $precio = $monto;
+                                            }
+
+                                            $total =  $montoDepo - $precio;
+
+                                            $upadteDeposito =  mysqli_query($conection, "UPDATE deposito_diarios SET monto = '$total' WHERE id = $idDeposito");
+                                        }
+
+                                    
+                                    }
+                                }
+                            
+
+                        }else{
+                            if($forma_pago_id == 1){
+                                
+
+                                //TODO: Validamos si la forma de pago del ingreso es en efectivo, para realizar la insercion de parte de diax.
+                                $precio = 0;
+                                $total  = 0;
+
+                                if ($descripcion == 'Radiografias') {
+                                    $precio = $monto * $nro_radiografias;
+                                } else {
+                                    $precio = $monto;
+                                }
+
+                                //TODO: Consultamos si ya existe un ingreso ya grabado en la tabla del dia actual.
+                                $fecha =  date('Y-m-d');
+                                $selectDeposito = mysqli_query($conection, "SELECT * FROM deposito_diarios WHERE fecha_deposito LIKE '%$fecha%'");
+                                $resultado =  mysqli_num_rows($selectDeposito);
+
+                                if ($resultado > 0) {
+                                    while ($deposito = mysqli_fetch_array($selectDeposito)) {
+                                        $idDeposito  = $deposito['id'];
+                                        $montoDepo   = $deposito['monto'];
+                                    }
+
+                                    $total =  $montoDepo + $precio;
+
+                                    $upadteDeposito =  mysqli_query($conection, "UPDATE deposito_diarios SET monto = '$total' WHERE id = $idDeposito");
+                                    
+                                } else {
+
+                                    $insertDeposito =  mysqli_query($conection, "INSERT INTO deposito_diarios(monto,fecha_deposito) VALUES('$precio','$fecha')");
+                                }
+                            }
+                        }
+                           
+                        }
+                    }
+                
             }
         }
-    }
+    
 } else {
    
     $pago  = 0;
     $pago_diferido = 1;
     $pago = $monto - $monto_2;
+
+    $datosComprobantes = mysqli_query($conection, "SELECT * FROM comprobantes WHERE id = $id");
+
+    while ($comprobante =  mysqli_fetch_array($datosComprobantes)) {
+        $ruc          =  $comprobante['ruc'];
+        $razon_social =  $comprobante['razon_social'];
+        $doctor_id    =  $comprobante['doctor_id'];
+    }
    
 
     //TODO: Si se habilito el pago combinado.
@@ -144,6 +248,28 @@ if (empty($forma_pago_id_2)) {
 
         if ($quey_detalle) {
             $sql_updateComprobante = mysqli_query($conection, "UPDATE comprobantes SET estatus = '$estatus' WHERE id = $id");
+
+            //TODO: Si el pago diferido es en tarjeta se realizara la resta del monto del ingreso en efectivo en diax.
+
+            if($doctor_id == 1  || $doctor_id == 2 || $doctor_id == 8 || $doctor_id == 4 || $doctor_id == 5 || $doctor_id == 6 || $doctor_id == 14){
+                if($forma_pago_id_2 == 2){
+                    $fecha =  date('Y-m-d');
+                    $selectDeposito = mysqli_query($conection, "SELECT * FROM deposito_diarios WHERE fecha_deposito LIKE '%$fecha%'");
+
+                    $resultado =  mysqli_num_rows($selectDeposito);
+
+                    if ($resultado > 0) {
+                    while ($deposito = mysqli_fetch_array($selectDeposito)) {
+                        $idDeposito  = $deposito['id'];
+                        $montoDepo   = $deposito['monto'];
+                    }
+
+                    $total =  $montoDepo - $monto_2;
+
+                    $upadteDeposito =  mysqli_query($conection, "UPDATE deposito_diarios SET monto = '$total' WHERE id = $idDeposito");
+                    }
+                }
+            }
         }
 
         if ($sql_updateComprobante) {
@@ -182,8 +308,8 @@ if (empty($forma_pago_id_2)) {
             }
 
 
-            $insert_consulta = mysqli_query($conection, "INSERT INTO consulta_medicos(ruc,razon_social,estudio_id,doctor_id,monto,monto_seguro,descuento,monto_cobrado,forma_pago_id,seguro_id)
-        VALUES('$ruc','$razon_social','$estudio_id','$doctor_id','$montoConsulta','$costo','$descuento','$montoCobrado','$forma_pago_id','$seguro_id')");
+            $insert_consulta = mysqli_query($conection, "INSERT INTO consulta_medicos(comprobante_id,ruc,razon_social,estudio_id,doctor_id,monto,monto_seguro,descuento,monto_cobrado,forma_pago_id,seguro_id)
+        VALUES('$id','$ruc','$razon_social','$estudio_id','$doctor_id','$montoConsulta','$costo','$descuento','$montoCobrado','$forma_pago_id','$seguro_id')");
 
             if ($insert_consulta) {
 
@@ -219,8 +345,8 @@ if (empty($forma_pago_id_2)) {
                     }
 
 
-                    $insert_servicio = mysqli_query($conection, "INSERT INTO servicio_medicos(doctor_id,estudio_id,monto,monto_diax,monto_doctor)
-                VALUES('$doctor_id','$estudio_id','$total','$montoDiax','$montoDoctor')");
+                    $insert_servicio = mysqli_query($conection, "INSERT INTO servicio_medicos(comprobante_id,doctor_id,estudio_id,monto,monto_diax,monto_doctor)
+                VALUES('$id','$doctor_id','$estudio_id','$total','$montoDiax','$montoDoctor')");
                 }
             }
         }

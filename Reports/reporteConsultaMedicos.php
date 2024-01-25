@@ -91,7 +91,7 @@ ob_start();
                     </table>
                     <section>
                         <p>Total a Cobrar : </p>
-                        <p class="alert alert-success text-right"><?php echo number_format($monto - $descuento,0,'.','.')?>.GS</p>
+                        <p class="alert alert-success text-right"><?php echo number_format($monto,0,'.','.')?>.GS</p>
                     </section>
                 </div>
             </div>
