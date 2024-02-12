@@ -69,16 +69,14 @@
               <span class="menu-title">Rendicion Diaria</span>
             </a>
           </li>
+
+            <li class="nav-item">
+            <a class="nav-link" href="../Templates/rendicionMensualDoctores.php">
+              <i class="typcn typcn-device-desktop menu-icon"></i>
+              <span class="menu-title">Rendicion Mensual</span>
+            </a>
+          </li>
          
-
-       
-
-         
-      
-
-
-
-
         </ul>
       </nav>
       <!-- partial -->

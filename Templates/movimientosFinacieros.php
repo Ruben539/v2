@@ -20,7 +20,7 @@ $fecha =  date('Y-m');
 if (empty($_POST['fecha_desde']) && empty($_POST['fecha_hasta'])) {
 
 
-    $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.nro_cheque,c.tipo_salida,c.monto,c.concepto,c.usuario,c.created_at,c.proveedor,c.foto
+    $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.proveedor,c.tipo_salida,c.monto,c.concepto,c.usuario,c.created_at,c.foto
     FROM empresa_movimientos c where c.created_at like '%" . $fecha . "%'  AND c.estatus = 1 ");
 } else {
 
@@ -28,7 +28,7 @@ if (empty($_POST['fecha_desde']) && empty($_POST['fecha_hasta'])) {
     $fecha_hasta  = $_POST['fecha_hasta'];
     // exit();
 
-    $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.nro_cheque,c.tipo_salida,c.monto,c.concepto,c.usuario,c.created_at,c.proveedor,c.foto
+    $sql = mysqli_query($conection, "SELECT c.id,c.forma_pago,c.proveedor,c.tipo_salida,c.monto,c.concepto,c.usuario,c.created_at,c.foto
     FROM empresa_movimientos c where c.created_at BETWEEN '$fecha_desde' AND '$fecha_hasta' AND c.estatus = 1");
 }
 
@@ -37,7 +37,8 @@ if (empty($_POST['fecha_desde']) && empty($_POST['fecha_hasta'])) {
 $resultado = mysqli_num_rows($sql);
 
 require_once('../Modals/modalImageComprobante.php');
-$query = mysqli_query($conection, "SELECT id,monto FROM caja_chica  WHERE estatus = 1 ");
+
+$query = mysqli_query($conection, "SELECT id,monto FROM caja_chica  WHERE estatus = 1");
 
 $resultado = mysqli_num_rows($query);
 
@@ -98,7 +99,7 @@ if ($resultado > 0) {
                                                 <th>Nro.</th>
                                                 <th>Fecha de Movimiento</th>
                                                 <th>Forma de Pago</th>
-                                                <th>Nro Cheque/ Transferencia</th>
+                                                <th>Proveedor</th>
                                                 <th>Tipo de Movimiento</th>
                                                 <th>Monto</th>
                                                 <th>Concepto</th>
@@ -141,7 +142,7 @@ if ($resultado > 0) {
                                                     <td><?php echo $nro; ?></td>
                                                     <td><?php echo $data['created_at']; ?></td>
                                                     <td><?php echo $data['forma_pago']; ?></td>
-                                                    <td><?php echo $data['nro_cheque']; ?></td>
+                                                    <td><?php echo $data['proveedor']; ?></td>
                                                     <td><?php echo $data['tipo_salida']; ?></td>
                                                     <td><?php echo number_format($data['monto'], 0, '.', '.'); ?></td>
                                                     <td><?php echo $data['concepto']; ?></td>

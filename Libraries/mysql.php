@@ -145,7 +145,7 @@ class MYSQL {
 			$strQuery = "SELECT (SUM(dc.monto) - dc.descuento) tmontoDiax  FROM comprobantes c 
 			INNER JOIN medicos m ON m.id = c.doctor_id 
 			INNER JOIN detalle_comprobantes dc ON c.id = dc.comprobante_id
-			where c.created_at LIKE '%$fecha%'  AND c.estatus = 1";
+			WHERE c.created_at LIKE '%$fecha%'  AND c.estatus = 1";
 			if($this->conexBDPDO()){
 				$pQuery =$this->oConBD->prepare($strQuery);
 				$pQuery->execute();
@@ -207,6 +207,29 @@ class MYSQL {
 			return -1;
 		}
 		return $idNotificacionMedico;
+	}
+
+	public function getNotificacionRadiologos(){
+		require_once('../Models/conexion.php');
+
+		$idNotificacionRadiologo = 0;
+		$fecha = date("Y-m");
+	
+		try {
+			$strQuery = mysqli_query($conection,"SELECT * FROM comprobantes
+			 WHERE estado LIKE '%En Espera%' AND doctor_id = 18 OR doctor_id = 32 AND estatus = 1");
+			$resultado = mysqli_num_rows($strQuery);
+
+			if($resultado > 0){
+				$idNotificacionRadiologo =  $resultado;
+			}
+			
+		} catch (PDOException $e) {
+			echo "MYSQL.getNotificacionRadiologos: ". $e->getMessage(). "\n";
+			return -1;
+		}
+
+		return $idNotificacionRadiologo;
 	}
 
 

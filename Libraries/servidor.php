@@ -31,6 +31,8 @@ if($rq == 1){
 	$respuesta = $oMysql->getEliminacionGasto();
 }elseif($rq == 9) {
 	$respuesta = $oMysql->getEliminacionMedico();
+}elseif($rq == 10) {
+	$respuesta = $oMysql->getNotificacionRadiologos();
 }
 echo $respuesta;
 

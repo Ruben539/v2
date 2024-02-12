@@ -22,7 +22,7 @@ require_once('../Models/conexion.php');
                     <div class="card-body">
                         <h4>Rendición de Informantes<i class="typcn typcn-user"></i> </h4>
 
-                        <form class="row" method="POST" id='formFabiola' name='formFabiola'>
+                        <form class="row" method="POST" action="../Reports/informeExcelInformantes.php" target="_blank">
                     <div class="col-md-6">
                         <div class="widget-small">
                             <input type="date" name="fecha_desde" id="fecha_desde" class="form-control">

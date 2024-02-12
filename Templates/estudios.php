@@ -21,7 +21,8 @@ require_once('../Modals/modalAsignarMonto.php');
                 <div class="card">
                     <div class="card-body">
 
-                        <h4>Estudios del Sistema <a href="../View/agregarEstudio.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> Registrar</a></h4>
+                        <h4>Estudios del Sistema <a href="../View/agregarEstudio.php" class="btn btn-primary mr-2"><i class="typcn typcn-user-add"></i> Registrar</a>
+                        <a href="../Reports/estudioPDF.php" class="btn btn-outline-danger" target="_blank" >PDF</a></h4>
 
                         <div class="table-responsive pt-3">
                             <table class="table table-bordered" id="tabla">
@@ -45,8 +46,8 @@ require_once('../Modals/modalAsignarMonto.php');
                                 <tbody>
                                     <?php
                                     $sql = mysqli_query($conection, "SELECT e.id,e.nombre,e.seguro,e.preferencial,e.hospitalario,ce.descripcion,pem.monto
-                                    FROM estudios e INNER JOIN categoria_estudio ce ON ce.id = e.categoria_id
-                                    LEFT JOIN pago_estudio_medicos pem ON pem.estudio_id = e.id 
+                                    FROM estudios e LEFT JOIN pago_estudio_medicos pem ON pem.estudio_id = e.id
+                                    LEFT JOIN categoria_estudio ce ON ce.id = e.categoria_id
                                     WHERE e.estatus = 1 ORDER BY e.id DESC");
 
                                     $resultado = mysqli_num_rows($sql);

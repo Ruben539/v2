@@ -36,6 +36,7 @@ if (!empty($_POST)) {
             if($montoCaja < 900000){
                
                 $update_caja = mysqli_query($conection,"UPDATE caja_chica SET monto = 0, estatus = 0 WHERE id = $id");
+                
                 $query_insert = mysqli_query($conection, "INSERT INTO caja_chica(monto)
 				VALUES('$total')");
 

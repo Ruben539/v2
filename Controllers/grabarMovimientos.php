@@ -41,14 +41,21 @@ if (!empty($_POST)) {
         }
               
 
-        $resultado = 0;
+        $query = mysqli_query($conection, "SELECT id,monto FROM caja_chica WHERE estatus = 1");
 
-        $query = mysqli_query($conection, "SELECT * FROM empresa_movimientos WHERE forma_pago = '$forma_pago' ");
+        $resultado = mysqli_num_rows($query);
+        $total = 0;
 
-        $resultado = mysqli_fetch_array($query);
+        if($resultado > 0){
+            while($data = mysqli_fetch_array($query)){
+                $id       = $data['id'];
+                $montoCaja = $data['monto'];
+            }
 
-
-
+            if($montoCaja < $monto){
+                $alert = '<p class = "msg_error">El monto en su caja es menor al necesitado, actualice su caja</p>'; 
+            }else{
+              
         $query_insert = mysqli_query($conection, "INSERT INTO empresa_movimientos(forma_pago,nro_cheque,tipo_salida,monto,concepto,usuario,proveedor,foto)
 				VALUES('$forma_pago','$nro_cheque','$tipo_salida','$monto','$concepto','$usuario','$proveedor','$imgComprobante' );");
 
@@ -57,10 +64,42 @@ if (!empty($_POST)) {
                 move_uploaded_file($url_tmp, $src);
             }
 
+            if($query_insert){
+                if($tipo_salida == 'Egreso'){
+
+                $total = $montoCaja - $monto;
+                $update_caja = mysqli_query($conection,"UPDATE caja_chica SET monto = '$total' WHERE id = $id");
+                
+                }
+                
+            }
+
             $alert = '<p class = "msg_save">Registro guardado Correctamente</p>';
         } else {
             $alert = '<p class = "msg_error">Error al Guardar el Registro</p>';
         }
-    }
-    mysqli_close($conection);
+            }
+
+           
+        }else{
+            $alert = '<p class = "msg_error">No tiene monto a descontar en su caja chica</p>';
+        }   
+
+           
+
+
+    //     $query_insert = mysqli_query($conection, "INSERT INTO empresa_movimientos(forma_pago,nro_cheque,tipo_salida,monto,concepto,usuario,proveedor,foto)
+	// 			VALUES('$forma_pago','$nro_cheque','$tipo_salida','$monto','$concepto','$usuario','$proveedor','$imgComprobante' );");
+
+    //     if ($query_insert) {
+    //         if($nombre_foto != ''){
+    //             move_uploaded_file($url_tmp, $src);
+    //         }
+
+    //         $alert = '<p class = "msg_save">Registro guardado Correctamente</p>';
+    //     } else {
+    //         $alert = '<p class = "msg_error">Error al Guardar el Registro</p>';
+    //     }
+     }
+   
 }

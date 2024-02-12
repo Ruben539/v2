@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 
 require_once("../Models/conexion.php");
 require_once("../includes/header_admin.php");
@@ -197,12 +197,8 @@ $id = $_SESSION['idMedico'];
 
 
         <?php include('../includes/footer_admin.php'); ?>
-        <script type="text/javascript" src="../assets/js/jquery-3.3.1.min.js"></script>
-        <script src="../../assets/js/sweetalert2.min.js"></script>
-        <script src="../../assets/js/core/popper.min.js"></script>
-        <script type="text/javascript" src="../../assets/js/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="../../assets/js/dataTables.bootstrap.min.js"></script>
         <script src="../js/confirmarPaciente.js"></script>
+        
         <script type="text/javascript">
             $(document).ready(function() {
 
