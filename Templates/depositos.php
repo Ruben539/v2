@@ -70,6 +70,7 @@ require_once('../Models/conexion.php');
         <script src="../assets/js/core/popper.min.js"></script>
         <script type="text/javascript" src="../assets/js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="../assets/js/dataTables.bootstrap.min.js"></script>
+        <script src="../assets/js/Depositos/depositos.js"></script>
         <script type="text/javascript">
             $('#formFechas').submit(function(e) {
                 e.preventDefault();

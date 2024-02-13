@@ -36,6 +36,9 @@
 <script src="../assets/js/settings.js"></script>
 <script src="../assets/js/todolist.js"></script>
 <script src="../js/funciones.js"></script>
+<?php if($_SESSION['rol'] == 5){?>
+        <script src="../js/notificacion.js"></script>
+        <?php }?>
 <script type="text/javascript">
     $(document).ready(function() {
         tabla = $("#tabla").DataTable({
