@@ -313,6 +313,7 @@ $resultado = mysqli_num_rows($query_comprobantes);
                 <li class="nav-item"> <a class="nav-link" href="../Templates/estudios.php"> Lista de Estudios </a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/estudiosEliminados.php"> Estudios Eliminados </a></li>
                 <li class="nav-item"> <a class="nav-link" href="../Templates/rendicionEstudios.php"> Rendición de Estudios</a></li>
+                <li class="nav-item"> <a class="nav-link" href="../Templates/reporteEstudios.php"> Reporte de Estudios</a></li>
               </ul>
             </div>
           </li>
